@@ -1,17 +1,17 @@
 <template>
   <div id="questionsView">
     <a-form :model="searchParams" layout="inline">
-      <a-form-item field="title" label="名称" style="min-width: 240px">
-        <a-input v-model="searchParams.title" placeholder="请输入名称" />
+      <a-form-item field="title" label="标题" style="min-width: 240px">
+        <a-input v-model="searchParams.title" placeholder="请输入标题" />
       </a-form-item>
       <a-form-item field="tags" label="标签" style="min-width: 240px">
-        <a-input-tag v-model="searchParams.tags" placeholder="请输入标签" />
+        <a-input-tag v-model="searchParams.tags" placeholder="输入标签后回车" />
       </a-form-item>
       <a-form-item>
-        <a-button type="primary" @click="doSubmit">提交</a-button>
+        <a-button type="primary" @click="doSubmit">搜索</a-button>
       </a-form-item>
     </a-form>
-    <a-divider size="0" />
+    <a-divider :size="0" />
     <a-table
       :ref="tableRef"
       :columns="columns"
@@ -34,7 +34,9 @@
       <template #acceptedRate="{ record }">
         {{
           `${
-            record.submitNum ? record.acceptedNum / record.submitNum : "0"
+            record.submitNum
+              ? (record.acceptedNum / record.submitNum) * 100
+              : "0"
           }% (${record.acceptedNum}/${record.submitNum})`
         }}
       </template>
@@ -52,18 +54,17 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { onMounted, ref, watchEffect } from "vue";
+<script lang="ts" setup>
+import { onMounted, ref, watch } from "vue";
 import {
-  Page_Question_,
   Question,
   QuestionControllerService,
   QuestionQueryRequest,
 } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
-import * as querystring from "querystring";
 import { useRouter } from "vue-router";
 import moment from "moment";
+import { toNumber } from "@vue/shared";
 
 const tableRef = ref();
 
@@ -82,18 +83,21 @@ const loadData = async () => {
   );
   if (res.code === 0) {
     dataList.value = res.data.records;
-    total.value = res.data.total;
+    total.value = toNumber(res.data.total);
   } else {
     message.error("加载失败，" + res.message);
   }
 };
-
 /**
  * 监听 searchParams 变量，改变时触发页面的重新加载
  */
-watchEffect(() => {
-  loadData();
-});
+watch(
+  () => searchParams.value,
+  () => {
+    loadData();
+  },
+  { deep: true }
+);
 
 /**
  * 页面加载时，请求数据
@@ -110,7 +114,7 @@ const columns = [
     dataIndex: "id",
   },
   {
-    title: "题目名称",
+    title: "标题",
     dataIndex: "title",
   },
   {
@@ -120,10 +124,6 @@ const columns = [
   {
     title: "通过率",
     slotName: "acceptedRate",
-  },
-  {
-    title: "创建时间",
-    slotName: "createTime",
   },
   {
     slotName: "optional",

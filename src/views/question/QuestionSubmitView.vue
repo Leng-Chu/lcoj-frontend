@@ -12,15 +12,14 @@
         >
           <a-option>java</a-option>
           <a-option>cpp</a-option>
-          <a-option>go</a-option>
-          <a-option>html</a-option>
+          <a-option>python</a-option>
         </a-select>
       </a-form-item>
       <a-form-item>
         <a-button type="primary" @click="doSubmit">搜索</a-button>
       </a-form-item>
     </a-form>
-    <a-divider size="0" />
+    <a-divider :size="0" />
     <a-table
       :ref="tableRef"
       :columns="columns"
@@ -33,8 +32,19 @@
       }"
       @page-change="onPageChange"
     >
+      <!--      <template #judgeInfo="{ record }">-->
+      <!--        {{ JSON.stringify(record.judgeInfo) }}-->
+      <!--      </template>-->
       <template #judgeInfo="{ record }">
-        {{ JSON.stringify(record.judgeInfo) }}
+        <a-descriptions
+          :data="transformJudgeInfo(record.judgeInfo)"
+          layout="inline-horizontal"
+          size="small"
+        />
+      </template>
+      <!-- 判题状态 -->
+      <template #status="{ record }">
+        {{ formatStatus(record.status) }}
       </template>
       <template #createTime="{ record }">
         {{ moment(record.createTime).format("YYYY-MM-DD") }}
@@ -43,16 +53,17 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { onMounted, ref, watchEffect } from "vue";
 import {
   Question,
-  QuestionControllerService,
+  QuestionSubmitControllerService,
   QuestionSubmitQueryRequest,
 } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
 import { useRouter } from "vue-router";
 import moment from "moment";
+import { toNumber } from "@vue/shared";
 
 const tableRef = ref();
 
@@ -66,16 +77,15 @@ const searchParams = ref<QuestionSubmitQueryRequest>({
 });
 
 const loadData = async () => {
-  const res = await QuestionControllerService.listQuestionSubmitByPageUsingPost(
-    {
+  const res =
+    await QuestionSubmitControllerService.listQuestionSubmitByPageUsingPost({
       ...searchParams.value,
       sortField: "createTime",
       sortOrder: "descend",
-    }
-  );
+    });
   if (res.code === 0) {
     dataList.value = res.data.records;
-    total.value = res.data.total;
+    total.value = toNumber(res.data.total);
   } else {
     message.error("加载失败，" + res.message);
   }
@@ -110,7 +120,7 @@ const columns = [
   },
   {
     title: "判题状态",
-    dataIndex: "status",
+    slotName: "status",
   },
   {
     title: "题目 id",
@@ -154,6 +164,44 @@ const doSubmit = () => {
     ...searchParams.value,
     current: 1,
   };
+};
+// 根据 status 返回对应的状态字符串
+const formatStatus = (status: number) => {
+  switch (status) {
+    case 0:
+      return "待判题";
+    case 1:
+      return "判题中";
+    case 2:
+      return "判题成功";
+    case 3:
+      return "判题失败";
+    default:
+      return "未知状态";
+  }
+};
+// 将 judgeInfo 对象转换为 descriptions 需要的数组形式
+const transformJudgeInfo = (judgeInfo: Record<string, any>) => {
+  return Object.keys(judgeInfo).map((key) => {
+    if (key === "time") {
+      return {
+        label: key,
+        value: `${judgeInfo[key]}ms`,
+      };
+    }
+
+    if (key === "memory") {
+      return {
+        label: key,
+        value: `${judgeInfo[key]}KB`,
+      };
+    }
+
+    return {
+      label: key,
+      value: `${judgeInfo[key]}`,
+    };
+  });
 };
 </script>
 

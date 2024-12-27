@@ -8,8 +8,8 @@
       auto-label-width
       @submit="handleSubmit"
     >
-      <a-form-item field="userAccount" label="账号">
-        <a-input v-model="form.userAccount" placeholder="请输入账号" />
+      <a-form-item field="userName" label="账号">
+        <a-input v-model="form.userName" placeholder="请输入账号" />
       </a-form-item>
       <a-form-item field="userPassword" tooltip="密码不小于 6 位" label="密码">
         <a-input-password
@@ -55,7 +55,7 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 
 const form = reactive({
-  userAccount: "",
+  userName: "",
   userPassword: "",
   checkPassword: "",
 } as UserRegisterRequest);

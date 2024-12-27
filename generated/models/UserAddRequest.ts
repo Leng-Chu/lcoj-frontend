@@ -4,8 +4,7 @@
 /* eslint-disable */
 
 export type UserAddRequest = {
-    userAccount?: string;
-    userAvatar?: string;
     userName?: string;
+    userPassword?: string;
     userRole?: string;
 };

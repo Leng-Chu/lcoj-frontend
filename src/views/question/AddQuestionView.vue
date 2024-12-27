@@ -1,95 +1,115 @@
 <template>
   <div id="addQuestionView">
-    <h2>创建题目</h2>
+    <h1>创建题目</h1>
     <a-form :model="form" label-align="left">
       <a-form-item field="title" label="标题">
-        <a-input v-model="form.title" placeholder="请输入标题" />
+        <a-space direction="vertical" style="width: 800px">
+          <a-input v-model="form.title" placeholder="请输入标题" />
+        </a-space>
       </a-form-item>
       <a-form-item field="tags" label="标签">
-        <a-input-tag v-model="form.tags" placeholder="请选择标签" allow-clear />
+        <a-space direction="vertical" style="width: 800px">
+          <a-input-tag
+            v-model="form.tags"
+            allow-clear
+            placeholder="输入标签后回车"
+          />
+        </a-space>
       </a-form-item>
-      <a-form-item field="content" label="题目内容">
-        <MdEditor :value="form.content" :handle-change="onContentChange" />
-      </a-form-item>
-      <a-form-item field="answer" label="答案">
-        <MdEditor :value="form.answer" :handle-change="onAnswerChange" />
-      </a-form-item>
-      <a-form-item label="判题配置" :content-flex="false" :merge-props="false">
-        <a-space direction="vertical" style="min-width: 480px">
+      <a-form-item :content-flex="false" :merge-props="false" label="判题配置">
+        <a-space direction="vertical" style="width: 400px">
           <a-form-item field="judgeConfig.timeLimit" label="时间限制">
             <a-input-number
               v-model="form.judgeConfig.timeLimit"
+              allow-clear
+              hide-button
               placeholder="请输入时间限制"
-              mode="button"
-              min="0"
-              size="large"
-            />
+            >
+              <template #suffix> ms</template>
+            </a-input-number>
           </a-form-item>
           <a-form-item field="judgeConfig.memoryLimit" label="内存限制">
             <a-input-number
               v-model="form.judgeConfig.memoryLimit"
+              allow-clear
+              hide-button
               placeholder="请输入内存限制"
-              mode="button"
-              min="0"
-              size="large"
-            />
-          </a-form-item>
-          <a-form-item field="judgeConfig.stackLimit" label="堆栈限制">
-            <a-input-number
-              v-model="form.judgeConfig.stackLimit"
-              placeholder="请输入堆栈限制"
-              mode="button"
-              min="0"
-              size="large"
-            />
+            >
+              <template #suffix> MB</template>
+            </a-input-number>
           </a-form-item>
         </a-space>
       </a-form-item>
+      <a-form-item field="content" label="题目描述">
+        <MdEditor
+          :handle-change="onContentChange"
+          :value="form.content"
+          style="width: 800px"
+        />
+      </a-form-item>
+      <a-form-item field="language" label="标程">
+        <a-select
+          v-model="form.language"
+          placeholder="请选择编程语言"
+          style="width: 400px"
+        >
+          <a-option value="none">不提供标程</a-option>
+          <a-option value="java">Java</a-option>
+          <a-option value="cpp">C++</a-option>
+          <a-option value="python">Python</a-option>
+        </a-select>
+      </a-form-item>
       <a-form-item
-        label="测试用例配置"
-        :content-flex="false"
-        :merge-props="false"
+        v-if="form.language && form.language !== 'none'"
+        field="answer"
       >
+        <CodeEditor
+          :handle-change="onAnswerChange"
+          :language="form.language"
+          :value="form.answer"
+          style="width: 800px"
+        />
+      </a-form-item>
+      <a-form-item :content-flex="false" :merge-props="false" label="样例">
         <a-form-item
           v-for="(judgeCaseItem, index) of form.judgeCase"
           :key="index"
           no-style
         >
-          <a-space direction="vertical" style="min-width: 640px">
-            <a-form-item
-              :field="`form.judgeCase[${index}].input`"
-              :label="`输入用例-${index}`"
-              :key="index"
-            >
-              <a-input
+          <a-space
+            direction="vertical"
+            style="width: 800px; padding-bottom: 20px"
+          >
+            <a-space style="width: 800px">
+              <a-textarea
                 v-model="judgeCaseItem.input"
-                placeholder="请输入测试输入用例"
+                :placeholder="`输入样例${index}`"
+                allow-clear
+                style="width: 400px; height: 200px"
               />
-            </a-form-item>
-            <a-form-item
-              :field="`form.judgeCase[${index}].output`"
-              :label="`输出用例-${index}`"
-              :key="index"
-            >
-              <a-input
+              <a-textarea
                 v-model="judgeCaseItem.output"
-                placeholder="请输入测试输出用例"
+                :placeholder="`输出样例${index}`"
+                allow-clear
+                style="width: 400px; height: 200px"
               />
-            </a-form-item>
-            <a-button status="danger" @click="handleDelete(index)">
-              删除
-            </a-button>
+            </a-space>
+            <div style="display: flex; justify-content: flex-end">
+              <a-button status="danger" @click="handleDelete(index)">
+                删除
+              </a-button>
+            </div>
           </a-space>
         </a-form-item>
-        <div style="margin-top: 32px">
-          <a-button @click="handleAdd" type="outline" status="success"
-            >新增测试用例
+        <div style="margin-top: 10px">
+          <a-button status="success" type="outline" @click="handleAdd"
+            >新增样例
           </a-button>
         </div>
       </a-form-item>
       <div style="margin-top: 16px" />
       <a-form-item>
-        <a-button type="primary" style="min-width: 200px" @click="doSubmit"
+        <a-button style="width: 200px" type="primary" @click="doSubmit"
           >提交
         </a-button>
       </a-form-item>
@@ -97,13 +117,15 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { onMounted, ref } from "vue";
+<script lang="ts" setup>
+import { onMounted, ref, watch } from "vue";
 import MdEditor from "@/components/MdEditor.vue";
 import { QuestionControllerService } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
+import CodeEditor from "@/components/CodeEditor.vue";
 
+const router = useRouter();
 const route = useRoute();
 // 如果页面地址包含 update，视为更新页面
 const updatePage = route.path.includes("update");
@@ -111,11 +133,11 @@ const updatePage = route.path.includes("update");
 let form = ref({
   title: "",
   tags: [],
+  language: "",
   answer: "",
   content: "",
   judgeConfig: {
-    memoryLimit: 1000,
-    stackLimit: 1000,
+    memoryLimit: 128,
     timeLimit: 1000,
   },
   judgeCase: [
@@ -152,8 +174,7 @@ const loadData = async () => {
     }
     if (!form.value.judgeConfig) {
       form.value.judgeConfig = {
-        memoryLimit: 1000,
-        stackLimit: 1000,
+        memoryLimit: 128,
         timeLimit: 1000,
       };
     } else {
@@ -164,6 +185,9 @@ const loadData = async () => {
     } else {
       form.value.tags = JSON.parse(form.value.tags as any);
     }
+    if (!form.value.language) {
+      form.value.language = "none";
+    }
   } else {
     message.error("加载失败，" + res.message);
   }
@@ -173,7 +197,19 @@ onMounted(() => {
   loadData();
 });
 
+watch(
+  () => form.value.language,
+  (newLanguage) => {
+    if (newLanguage === "none") {
+      form.value.answer = "";
+    }
+  }
+);
+
 const doSubmit = async () => {
+  if (!form.value.language) {
+    form.value.language = "none";
+  }
   console.log(form.value);
   // 区分更新还是创建
   if (updatePage) {
@@ -182,6 +218,10 @@ const doSubmit = async () => {
     );
     if (res.code === 0) {
       message.success("更新成功");
+      router.push({
+        path: "/manage/question/",
+        replace: true,
+      });
     } else {
       message.error("更新失败，" + res.message);
     }
@@ -191,6 +231,10 @@ const doSubmit = async () => {
     );
     if (res.code === 0) {
       message.success("创建成功");
+      router.push({
+        path: "/questions",
+        replace: true,
+      });
     } else {
       message.error("创建失败，" + res.message);
     }
@@ -198,7 +242,7 @@ const doSubmit = async () => {
 };
 
 /**
- * 新增判题用例
+ * 新增判题样例
  */
 const handleAdd = () => {
   form.value.judgeCase.push({
@@ -208,7 +252,7 @@ const handleAdd = () => {
 };
 
 /**
- * 删除判题用例
+ * 删除判题样例
  */
 const handleDelete = (index: number) => {
   form.value.judgeCase.splice(index, 1);
@@ -225,5 +269,7 @@ const onAnswerChange = (value: string) => {
 
 <style scoped>
 #addQuestionView {
+  max-width: 1080px;
+  margin: 0 auto;
 }
 </style>

@@ -1,17 +1,18 @@
 <template>
   <Editor
-    :value="value"
     :mode="mode"
     :plugins="plugins"
+    :value="value"
     @change="handleChange"
   />
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import gfm from "@bytemd/plugin-gfm";
 import highlight from "@bytemd/plugin-highlight";
-import { Editor, Viewer } from "@bytemd/vue-next";
-import { ref, withDefaults, defineProps } from "vue";
+import math from "@bytemd/plugin-math";
+import { Editor } from "@bytemd/vue-next";
+import { defineProps, withDefaults } from "vue";
 
 /**
  * 定义组件属性类型
@@ -25,6 +26,7 @@ interface Props {
 const plugins = [
   gfm(),
   highlight(),
+  math(),
   // Add more plugins here
 ];
 

@@ -5,8 +5,7 @@
 
 export type UserUpdateRequest = {
     id?: number;
-    userAvatar?: string;
     userName?: string;
-    userProfile?: string;
+    userPassword?: string;
     userRole?: string;
 };

@@ -4,18 +4,14 @@
 /* eslint-disable */
 
 import type { JudgeConfig } from './JudgeConfig';
-import type { UserVO } from './UserVO';
+import type { SampleCase } from './SampleCase';
 
 export type QuestionVO = {
-    acceptedNum?: number;
     content?: string;
-    createTime?: string;
     id?: number;
     judgeConfig?: JudgeConfig;
-    submitNum?: number;
+    num?: number;
+    sampleCase?: Array<SampleCase>;
     tags?: Array<string>;
     title?: string;
-    updateTime?: string;
-    userId?: number;
-    userVO?: UserVO;
 };

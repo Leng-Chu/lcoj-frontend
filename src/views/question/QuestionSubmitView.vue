@@ -1,18 +1,46 @@
 <template>
   <div id="questionSubmitView">
     <a-form :model="searchParams" layout="inline">
-      <a-form-item field="questionId" label="题号" style="min-width: 240px">
-        <a-input v-model="searchParams.questionId" placeholder="请输入" />
+      <a-form-item field="questionNum" label="题号" style="width: 180px">
+        <a-input-number
+          v-model="searchParams.questionNum"
+          :max="100000"
+          :min="1"
+          placeholder="请输入题号"
+        />
       </a-form-item>
-      <a-form-item field="language" label="编程语言" style="min-width: 240px">
+      <a-form-item field="questionTitle" label="标题" style="width: 240px">
+        <a-input
+          v-model="searchParams.questionTitle"
+          placeholder="请输入标题"
+        />
+      </a-form-item>
+      <a-form-item field="userName" label="提交者" style="width: 200px">
+        <a-input v-model="searchParams.userName" placeholder="请输入提交者" />
+      </a-form-item>
+      <a-form-item field="language" label="编程语言" style="width: 200px">
         <a-select
           v-model="searchParams.language"
-          :style="{ width: '320px' }"
-          placeholder="选择编程语言"
+          :style="{ width: '200px' }"
+          placeholder="选择语言"
         >
-          <a-option>java</a-option>
-          <a-option>cpp</a-option>
-          <a-option>python</a-option>
+          <a-option value="">全选</a-option>
+          <a-option value="java">Java</a-option>
+          <a-option value="cpp">C++</a-option>
+          <a-option value="python">Python</a-option>
+        </a-select>
+      </a-form-item>
+      <a-form-item field="status" label="判题状态" style="width: 200px">
+        <a-select
+          v-model="searchParams.status"
+          :style="{ width: '200px' }"
+          placeholder="选择状态"
+        >
+          <a-option value="">全选</a-option>
+          <a-option value="0">待判题</a-option>
+          <a-option value="1">判题中</a-option>
+          <a-option value="2">成功</a-option>
+          <a-option value="3">失败</a-option>
         </a-select>
       </a-form-item>
       <a-form-item>
@@ -32,9 +60,18 @@
       }"
       @page-change="onPageChange"
     >
-      <!--      <template #judgeInfo="{ record }">-->
-      <!--        {{ JSON.stringify(record.judgeInfo) }}-->
-      <!--      </template>-->
+      <template #language="{ record }">
+        <a
+          v-if="record.code"
+          style="color: blue; text-decoration: underline; cursor: pointer"
+          @click="showCode(record.code)"
+        >
+          {{ record.language }}
+        </a>
+        <span v-else>
+          {{ record.language }}
+        </span>
+      </template>
       <template #judgeInfo="{ record }">
         <a-descriptions
           :data="transformJudgeInfo(record.judgeInfo)"
@@ -42,7 +79,6 @@
           size="small"
         />
       </template>
-      <!-- 判题状态 -->
       <template #status="{ record }">
         {{ formatStatus(record.status) }}
       </template>
@@ -50,18 +86,24 @@
         {{ moment(record.createTime).format("YYYY-MM-DD") }}
       </template>
     </a-table>
+    <a-modal
+      v-model:visible="isCodeModalVisible"
+      :hide-cancel="true"
+      title="Code"
+      width="800px"
+    >
+      <pre>{{ codeContent }}</pre>
+    </a-modal>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { onMounted, ref, watchEffect } from "vue";
 import {
-  Question,
   QuestionSubmitControllerService,
   QuestionSubmitQueryRequest,
 } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
-import { useRouter } from "vue-router";
 import moment from "moment";
 import { toNumber } from "@vue/shared";
 
@@ -70,8 +112,10 @@ const tableRef = ref();
 const dataList = ref([]);
 const total = ref(0);
 const searchParams = ref<QuestionSubmitQueryRequest>({
-  questionId: undefined,
-  language: undefined,
+  questionNum: NaN,
+  questionTitle: "",
+  userName: "",
+  language: "",
   pageSize: 10,
   current: 1,
 });
@@ -107,12 +151,16 @@ onMounted(() => {
 
 const columns = [
   {
-    title: "提交号",
-    dataIndex: "id",
+    title: "题号",
+    dataIndex: "questionNum",
+  },
+  {
+    title: "题目标题",
+    dataIndex: "questionTitle",
   },
   {
     title: "编程语言",
-    dataIndex: "language",
+    slotName: "language",
   },
   {
     title: "判题信息",
@@ -123,15 +171,11 @@ const columns = [
     slotName: "status",
   },
   {
-    title: "题目 id",
-    dataIndex: "questionId",
+    title: "提交者",
+    dataIndex: "userName",
   },
   {
-    title: "提交者 id",
-    dataIndex: "userId",
-  },
-  {
-    title: "创建时间",
+    title: "提交时间",
     slotName: "createTime",
   },
 ];
@@ -143,16 +187,11 @@ const onPageChange = (page: number) => {
   };
 };
 
-const router = useRouter();
-
-/**
- * 跳转到做题页面
- * @param question
- */
-const toQuestionPage = (question: Question) => {
-  router.push({
-    path: `/view/question/${question.id}`,
-  });
+const isCodeModalVisible = ref(false);
+const codeContent = ref("");
+const showCode = (code: string) => {
+  codeContent.value = code;
+  isCodeModalVisible.value = true;
 };
 
 /**
@@ -186,20 +225,20 @@ const transformJudgeInfo = (judgeInfo: Record<string, any>) => {
     if (key === "time") {
       return {
         label: key,
-        value: `${judgeInfo[key]}ms`,
+        value: judgeInfo[key] !== null ? `${judgeInfo[key]}ms` : "0ms",
       };
     }
 
     if (key === "memory") {
       return {
         label: key,
-        value: `${judgeInfo[key]}KB`,
+        value: judgeInfo[key] !== null ? `${judgeInfo[key]}KB` : "0KB",
       };
     }
 
     return {
       label: key,
-      value: `${judgeInfo[key]}`,
+      value: judgeInfo[key] !== null ? `${judgeInfo[key]}` : "等待判题",
     };
   });
 };

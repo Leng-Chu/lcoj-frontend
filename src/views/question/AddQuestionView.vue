@@ -1,10 +1,20 @@
 <template>
   <div id="addQuestionView">
-    <h1>创建题目</h1>
+    <h1>{{ updatePage ? "更新题目" : "创建题目" }}</h1>
     <a-form :model="form" label-align="left">
       <a-form-item field="title" label="标题">
         <a-space direction="vertical" style="width: 800px">
           <a-input v-model="form.title" placeholder="请输入标题" />
+        </a-space>
+      </a-form-item>
+      <a-form-item field="num" label="题号">
+        <a-space direction="vertical" style="width: 800px">
+          <a-input-number
+            v-model="form.num"
+            :max="100000"
+            :min="1"
+            placeholder="请输入题号（添加题目时可自动生成）"
+          />
         </a-space>
       </a-form-item>
       <a-form-item field="tags" label="标签">
@@ -70,9 +80,14 @@
           style="width: 800px"
         />
       </a-form-item>
+      <a-form-item field="judgeCase" label="测试用例">
+        <a-space direction="vertical" style="width: 800px">
+          <a-input v-model="form.judgeCase" placeholder="请输入URL" />
+        </a-space>
+      </a-form-item>
       <a-form-item :content-flex="false" :merge-props="false" label="样例">
         <a-form-item
-          v-for="(judgeCaseItem, index) of form.judgeCase"
+          v-for="(sampleCaseItem, index) of form.sampleCase"
           :key="index"
           no-style
         >
@@ -82,13 +97,13 @@
           >
             <a-space style="width: 800px">
               <a-textarea
-                v-model="judgeCaseItem.input"
+                v-model="sampleCaseItem.input"
                 :placeholder="`输入样例${index}`"
                 allow-clear
                 style="width: 400px; height: 200px"
               />
               <a-textarea
-                v-model="judgeCaseItem.output"
+                v-model="sampleCaseItem.output"
                 :placeholder="`输出样例${index}`"
                 allow-clear
                 style="width: 400px; height: 200px"
@@ -124,23 +139,26 @@ import { QuestionControllerService } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
 import { useRoute, useRouter } from "vue-router";
 import CodeEditor from "@/components/CodeEditor.vue";
+import { toNumber } from "@vue/shared";
 
 const router = useRouter();
 const route = useRoute();
 // 如果页面地址包含 update，视为更新页面
-const updatePage = route.path.includes("update");
+let updatePage = route.path.includes("update");
 
 let form = ref({
   title: "",
+  num: NaN,
   tags: [],
   language: "",
   answer: "",
   content: "",
+  judgeCase: "",
   judgeConfig: {
     memoryLimit: 128,
     timeLimit: 1000,
   },
-  judgeCase: [
+  sampleCase: [
     {
       input: "",
       output: "",
@@ -154,6 +172,25 @@ let form = ref({
 const loadData = async () => {
   const id = route.query.id;
   if (!id) {
+    form.value = {
+      title: "",
+      num: NaN,
+      tags: [],
+      language: "",
+      answer: "",
+      content: "",
+      judgeCase: "",
+      judgeConfig: {
+        memoryLimit: 128,
+        timeLimit: 1000,
+      },
+      sampleCase: [
+        {
+          input: "",
+          output: "",
+        },
+      ],
+    };
     return;
   }
   const res = await QuestionControllerService.getQuestionByIdUsingGet(
@@ -161,16 +198,17 @@ const loadData = async () => {
   );
   if (res.code === 0) {
     form.value = res.data as any;
+    form.value.num = toNumber(form.value.num);
     // json 转 js 对象
-    if (!form.value.judgeCase) {
-      form.value.judgeCase = [
+    if (!form.value.sampleCase) {
+      form.value.sampleCase = [
         {
           input: "",
           output: "",
         },
       ];
     } else {
-      form.value.judgeCase = JSON.parse(form.value.judgeCase as any);
+      form.value.sampleCase = JSON.parse(form.value.sampleCase as any);
     }
     if (!form.value.judgeConfig) {
       form.value.judgeConfig = {
@@ -203,6 +241,14 @@ watch(
     if (newLanguage === "none") {
       form.value.answer = "";
     }
+  }
+);
+
+watch(
+  () => route.path,
+  (newPath) => {
+    updatePage = newPath.includes("update");
+    loadData();
   }
 );
 
@@ -245,7 +291,7 @@ const doSubmit = async () => {
  * 新增判题样例
  */
 const handleAdd = () => {
-  form.value.judgeCase.push({
+  form.value.sampleCase.push({
     input: "",
     output: "",
   });
@@ -255,7 +301,7 @@ const handleAdd = () => {
  * 删除判题样例
  */
 const handleDelete = (index: number) => {
-  form.value.judgeCase.splice(index, 1);
+  form.value.sampleCase.splice(index, 1);
 };
 
 const onContentChange = (value: string) => {

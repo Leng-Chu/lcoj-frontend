@@ -7,10 +7,10 @@
             <a-card v-if="question" :title="question.title">
               <a-descriptions :column="{ xs: 1, md: 2, lg: 3 }">
                 <a-descriptions-item label="时间限制">
-                  {{ question.judgeConfig.timeLimit ?? 0 }}
+                  {{ `${question.judgeConfig.timeLimit ?? 0}ms` }}
                 </a-descriptions-item>
                 <a-descriptions-item label="内存限制">
-                  {{ question.judgeConfig.memoryLimit ?? 0 }}
+                  {{ `${question.judgeConfig.memoryLimit ?? 0}MB` }}
                 </a-descriptions-item>
               </a-descriptions>
               <MdViewer :value="question.content || ''" />
@@ -26,8 +26,8 @@
               </template>
             </a-card>
           </a-tab-pane>
-          <a-tab-pane key="comment" disabled title="评论"> 评论区</a-tab-pane>
-          <a-tab-pane key="answer" title="答案"> 暂时无法查看答案</a-tab-pane>
+          <!--          <a-tab-pane key="comment" disabled title="评论"> 评论区</a-tab-pane>-->
+          <!--          <a-tab-pane key="answer" title="答案"> 暂时无法查看答案</a-tab-pane>-->
         </a-tabs>
       </a-col>
       <a-col :md="12" :xs="24">
@@ -73,11 +73,13 @@ import {
   QuestionSubmitControllerService,
   QuestionVO,
 } from "../../../generated";
+import { useRouter } from "vue-router";
 
 interface Props {
   id: string;
 }
 
+const router = useRouter();
 const props = withDefaults(defineProps<Props>(), {
   id: () => "",
 });
@@ -114,6 +116,10 @@ const doSubmit = async () => {
   });
   if (res.code === 0) {
     message.success("提交成功");
+    router.push({
+      path: "/question_submit",
+      replace: true,
+    });
   } else {
     message.error("提交失败," + res.message);
   }

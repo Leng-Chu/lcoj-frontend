@@ -3,13 +3,15 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type QuestionQueryRequest = {
-    current?: number;
+export type QuestionListVO = {
+    acceptedNum?: number;
+    createTime?: string;
+    id?: number;
     num?: number;
-    pageSize?: number;
-    sortField?: string;
-    sortOrder?: string;
+    submitNum?: number;
     tags?: Array<string>;
     title?: string;
+    updateTime?: string;
+    userId?: number;
     userName?: string;
 };

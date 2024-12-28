@@ -7,7 +7,7 @@ router.beforeEach(async (to, from, next) => {
   console.log("登陆用户信息", store.state.user.loginUser);
   let loginUser = store.state.user.loginUser;
   // // 如果之前没登陆过，自动登录
-  if (!loginUser || !loginUser.userRole) {
+  if (!loginUser || !loginUser.userRole || !loginUser.userName) {
     // 加 await 是为了等用户登录成功之后，再执行后续的代码
     await store.dispatch("user/getLoginUser");
     loginUser = store.state.user.loginUser;
@@ -22,7 +22,7 @@ router.beforeEach(async (to, from, next) => {
       !loginUser.userRole ||
       loginUser.userRole === ACCESS_ENUM.NOT_LOGIN
     ) {
-      console.log("用户未登录或权限不足，跳转到登录页面");
+      console.log("用户未登录，跳转到登录页面");
       next(`/user/login?redirect=${to.fullPath}`);
       return;
     }

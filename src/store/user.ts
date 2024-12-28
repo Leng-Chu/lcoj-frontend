@@ -7,6 +7,7 @@ export default {
   namespaced: true,
   state: () => ({
     loginUser: {
+      userName: "",
       userRole: ACCESS_ENUM.NOT_LOGIN,
     },
   }),

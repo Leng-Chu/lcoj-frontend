@@ -4,8 +4,6 @@
 /* eslint-disable */
 
 import type { JudgeInfo } from './JudgeInfo';
-import type { QuestionVO } from './QuestionVO';
-import type { UserVO } from './UserVO';
 
 export type QuestionSubmitVO = {
     code?: string;
@@ -14,9 +12,7 @@ export type QuestionSubmitVO = {
     judgeInfo?: JudgeInfo;
     language?: string;
     questionId?: number;
-    questionVO?: QuestionVO;
     status?: number;
     updateTime?: string;
     userId?: number;
-    userVO?: UserVO;
 };

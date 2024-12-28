@@ -1,10 +1,21 @@
 <template>
   <div id="manageQuestionView">
     <a-form :model="searchParams" layout="inline">
-      <a-form-item field="title" label="标题" style="min-width: 240px">
+      <a-form-item field="num" label="题号" style="width: 180px">
+        <a-input-number
+          v-model="searchParams.num"
+          :max="100000"
+          :min="1"
+          placeholder="请输入题号"
+        />
+      </a-form-item>
+      <a-form-item field="title" label="标题" style="width: 240px">
         <a-input v-model="searchParams.title" placeholder="请输入标题" />
       </a-form-item>
-      <a-form-item field="tags" label="标签" style="min-width: 240px">
+      <a-form-item field="userName" label="创建者" style="width: 240px">
+        <a-input v-model="searchParams.userName" placeholder="请输入创建者" />
+      </a-form-item>
+      <a-form-item field="tags" label="标签" style="width: 300px">
         <a-input-tag v-model="searchParams.tags" placeholder="输入标签后回车" />
       </a-form-item>
       <a-form-item>
@@ -60,7 +71,9 @@ const tableRef = ref();
 const dataList = ref([]);
 const total = ref(0);
 const searchParams = ref({
+  num: undefined,
   title: "",
+  userName: "",
   tags: [],
   pageSize: 10,
   current: 1,
@@ -101,7 +114,7 @@ onMounted(() => {
 const columns = [
   {
     title: "题号",
-    dataIndex: "id",
+    dataIndex: "num",
   },
   {
     title: "标题",

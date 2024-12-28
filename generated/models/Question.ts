@@ -29,13 +29,25 @@ export type Question = {
      */
     isDelete?: number;
     /**
-     * 判题用例（json 数组）
+     * 判题用例（url）
      */
     judgeCase?: string;
     /**
      * 判题配置（json 对象）
      */
     judgeConfig?: string;
+    /**
+     * 标程语言
+     */
+    language?: string;
+    /**
+     * 题号
+     */
+    num?: number;
+    /**
+     * 样例（json 数组）
+     */
+    sampleCase?: string;
     /**
      * 题目提交数
      */
@@ -53,7 +65,11 @@ export type Question = {
      */
     updateTime?: string;
     /**
-     * 创建用户 id
+     * 创建用户id
      */
     userId?: number;
+    /**
+     * 创建用户昵称
+     */
+    userName?: string;
 };

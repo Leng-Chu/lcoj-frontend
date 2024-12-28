@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type JudgeCase = {
+export type SampleCase = {
     input?: string;
     output?: string;
 };

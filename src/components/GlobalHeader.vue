@@ -1,9 +1,9 @@
 <template>
-  <a-row id="globalHeader" align="center" :wrap="false">
+  <a-row id="globalHeader" :wrap="false" align="center">
     <a-col flex="auto">
       <a-menu
-        mode="horizontal"
         :selected-keys="selectedKeys"
+        mode="horizontal"
         @menu-item-click="doMenuClick"
       >
         <a-menu-item
@@ -24,10 +24,10 @@
     <a-col flex="100px">
       <!-- 未登录状态 -->
       <a-link v-if="!store.state.user.loginUser.userName" @click="doLogin"
-        >未登录</a-link
-      >
+        >未登录
+      </a-link>
       <!-- 已登录状态 -->
-      <a-popover v-else trigger="click" position="bottom">
+      <a-popover v-else position="bottom" trigger="click">
         <a-link>{{ store.state.user.loginUser.userName }}</a-link>
         <template #content>
           <p class="logout" @click="doLogout">退出登录</p>
@@ -37,15 +37,15 @@
   </a-row>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { routes } from "../router/routes";
-import { useRoute, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 import { computed, ref } from "vue";
 import { useStore } from "vuex";
 import checkAccess from "@/access/checkAccess";
-import { Modal } from "@arco-design/web-vue";
 import ACCESS_ENUM from "@/access/accessEnum";
 import message from "@arco-design/web-vue/es/message";
+import { UserControllerService } from "../../generated";
 
 const router = useRouter();
 const store = useStore();
@@ -86,10 +86,15 @@ const doLogin = () => {
   router.push("/user/login");
 };
 
-const doLogout = () => {
-  store.dispatch("user/logout");
+const doLogout = async () => {
+  //调用logout接口
+  await UserControllerService.userLogoutUsingPost();
+  store.state.user.loginUser = {
+    userName: "",
+    userRole: ACCESS_ENUM.NOT_LOGIN,
+  };
   message.success("退出成功");
-  router.push({ path: "/questions" });
+  await router.push({ path: "/questions" });
   setTimeout(() => {
     window.location.reload();
   }, 1000);
@@ -113,6 +118,7 @@ const doLogout = () => {
 
 .logout {
   cursor: pointer;
+
   &:hover {
     background-color: #f5f5f5;
   }

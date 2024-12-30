@@ -61,19 +61,25 @@
       @page-change="onPageChange"
     >
       <template #questionNum="{ record }">
-        <router-link :to="{ path: `/view/question/${record.questionId}` }">
+        <router-link
+          :to="{ path: `/view/question/${record.questionId}` }"
+          class="custom-link"
+        >
           {{ record.questionNum }}
         </router-link>
       </template>
       <template #questionTitle="{ record }">
-        <router-link :to="{ path: `/view/question/${record.questionId}` }">
+        <router-link
+          :to="{ path: `/view/question/${record.questionId}` }"
+          class="custom-link"
+        >
           {{ record.questionTitle }}
         </router-link>
       </template>
       <template #language="{ record }">
         <a
           v-if="record.code"
-          style="color: blue; text-decoration: underline; cursor: pointer"
+          class="custom-link"
           @click="showCode(record.code)"
         >
           {{ record.language }}
@@ -258,5 +264,15 @@ const transformJudgeInfo = (judgeInfo: Record<string, any>) => {
 #questionSubmitView {
   max-width: 1280px;
   margin: 0 auto;
+}
+
+.custom-link {
+  color: #1890ff;
+  text-decoration: none;
+}
+
+.custom-link:hover {
+  text-decoration: underline;
+  cursor: pointer;
 }
 </style>

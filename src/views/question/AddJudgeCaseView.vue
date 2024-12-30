@@ -108,7 +108,7 @@ const column2 = [
 const data1 = reactive<Case[]>([]);
 const data2 = reactive<Case[]>([]);
 const num = toNumber(route.query.num);
-const name = route.query.num + ": " + route.query.title;
+const name = route.query.num + ". " + route.query.title;
 let count = 0;
 /**
  * 根据题目 id 获取测试数据

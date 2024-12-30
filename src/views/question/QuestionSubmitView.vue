@@ -60,6 +60,16 @@
       }"
       @page-change="onPageChange"
     >
+      <template #questionNum="{ record }">
+        <router-link :to="{ path: `/view/question/${record.questionId}` }">
+          {{ record.questionNum }}
+        </router-link>
+      </template>
+      <template #questionTitle="{ record }">
+        <router-link :to="{ path: `/view/question/${record.questionId}` }">
+          {{ record.questionTitle }}
+        </router-link>
+      </template>
       <template #language="{ record }">
         <a
           v-if="record.code"
@@ -83,7 +93,7 @@
         {{ formatStatus(record.status) }}
       </template>
       <template #createTime="{ record }">
-        {{ moment(record.createTime).format("YYYY-MM-DD") }}
+        {{ moment(record.createTime).format("YYYY-MM-DD HH:mm:ss") }}
       </template>
     </a-table>
     <a-modal
@@ -152,11 +162,11 @@ onMounted(() => {
 const columns = [
   {
     title: "题号",
-    dataIndex: "questionNum",
+    slotName: "questionNum",
   },
   {
     title: "题目标题",
-    dataIndex: "questionTitle",
+    slotName: "questionTitle",
   },
   {
     title: "编程语言",

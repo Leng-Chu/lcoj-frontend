@@ -11,6 +11,7 @@ export type QuestionSubmitVO = {
     id?: number;
     judgeInfo?: JudgeInfo;
     language?: string;
+    questionId?: number;
     questionNum?: number;
     questionTitle?: string;
     status?: number;

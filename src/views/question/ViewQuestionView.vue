@@ -1,34 +1,40 @@
 <template>
   <div id="viewQuestionView">
     <a-row :gutter="[24, 24]">
-      <a-col :md="12" :xs="24">
-        <a-tabs default-active-key="question">
-          <a-tab-pane key="question" title="题目">
-            <a-card v-if="question" :title="question.title">
-              <a-descriptions :column="{ xs: 1, md: 2, lg: 3 }">
-                <a-descriptions-item label="时间限制">
-                  {{ `${question.judgeConfig.timeLimit ?? 0}ms` }}
-                </a-descriptions-item>
-                <a-descriptions-item label="内存限制">
-                  {{ `${question.judgeConfig.memoryLimit ?? 0}MB` }}
-                </a-descriptions-item>
-              </a-descriptions>
-              <MdViewer :value="question.content || ''" />
-              <template #extra>
-                <a-space wrap>
-                  <a-tag
-                    v-for="(tag, index) of question.tags"
-                    :key="index"
-                    color="green"
-                    >{{ tag }}
-                  </a-tag>
-                </a-space>
-              </template>
-            </a-card>
-          </a-tab-pane>
-          <!--          <a-tab-pane key="comment" disabled title="评论"> 评论区</a-tab-pane>-->
-          <!--          <a-tab-pane key="answer" title="答案"> 暂时无法查看答案</a-tab-pane>-->
-        </a-tabs>
+      <a-col :md="12" :xs="24" style="max-height: 80vh; overflow-y: auto">
+        <h1 v-if="question">{{ question.num }}. {{ question.title }}</h1>
+        <div v-if="question" style="display: flex; padding-bottom: 5px">
+          <a-space style="padding-left: 17px">
+            <a-descriptions v-if="question" :column="{ xs: 1, md: 2, lg: 3 }">
+              <a-descriptions-item label="时间限制">
+                {{ `${question.judgeConfig.timeLimit ?? 0}ms` }}
+              </a-descriptions-item>
+              <a-descriptions-item label="内存限制">
+                {{ `${question.judgeConfig.memoryLimit ?? 0}MB` }}
+              </a-descriptions-item>
+            </a-descriptions>
+          </a-space>
+          <a-space style="flex: 1; justify-content: flex-end" wrap>
+            <a-tag
+              v-for="(tag, index) of question.tags"
+              :key="index"
+              color="green"
+              >{{ tag }}
+            </a-tag>
+          </a-space>
+        </div>
+        <a-card v-if="question" title="题目描述">
+          <MdViewer :value="question.content || ''" />
+        </a-card>
+        <a-card v-if="question" title="样例">
+          <a-table
+            :columns="columns"
+            :data="question.sampleCase"
+            :pagination="false"
+            style="white-space: pre-wrap"
+          >
+          </a-table>
+        </a-card>
       </a-col>
       <a-col :md="12" :xs="24">
         <a-form :model="form" layout="inline">
@@ -83,6 +89,16 @@ const router = useRouter();
 const props = withDefaults(defineProps<Props>(), {
   id: () => "",
 });
+const columns = [
+  {
+    title: "输入",
+    dataIndex: "input",
+  },
+  {
+    title: "输出",
+    dataIndex: "output",
+  },
+];
 
 const question = ref<QuestionVO>();
 

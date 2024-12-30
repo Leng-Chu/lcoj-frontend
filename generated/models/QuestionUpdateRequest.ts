@@ -10,7 +10,6 @@ export type QuestionUpdateRequest = {
     answer?: string;
     content?: string;
     id?: number;
-    judgeCase?: string;
     judgeConfig?: JudgeConfig;
     language?: string;
     num?: number;

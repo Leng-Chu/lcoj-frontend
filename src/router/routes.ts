@@ -9,6 +9,7 @@ import ManageQuestionView from "@/views/question/ManageQuestionView.vue";
 import QuestionsView from "@/views/question/QuestionsView.vue";
 import QuestionSubmitView from "@/views/question/QuestionSubmitView.vue";
 import ViewQuestionView from "@/views/question/ViewQuestionView.vue";
+import AddJudgeCaseView from "@/views/question/AddJudgeCaseView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -75,6 +76,16 @@ export const routes: Array<RouteRecordRaw> = [
     path: "/update/question",
     name: "更新题目",
     component: AddQuestionView,
+    meta: {
+      access: ACCESS_ENUM.ADMIN,
+      hideInMenu: true,
+    },
+  },
+  {
+    path: "/judgeCase",
+    name: "管理测试数据",
+    component: AddJudgeCaseView,
+    props: true,
     meta: {
       access: ACCESS_ENUM.ADMIN,
       hideInMenu: true,

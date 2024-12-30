@@ -13,7 +13,7 @@
             v-model="form.num"
             :max="100000"
             :min="1"
-            placeholder="请输入题号（添加题目时可自动生成）"
+            placeholder="请输入题号"
           />
         </a-space>
       </a-form-item>
@@ -80,10 +80,10 @@
           style="width: 800px"
         />
       </a-form-item>
-      <a-form-item field="judgeCase" label="测试用例">
-        <a-space direction="vertical" style="width: 800px">
-          <a-input v-model="form.judgeCase" placeholder="请输入URL" />
-        </a-space>
+      <a-form-item v-if="updatePage" field="judgeCase" label="测试用例">
+        <a-button style="width: 200px" type="outline" @click="manageJudgeCase">
+          管理测试用例
+        </a-button>
       </a-form-item>
       <a-form-item :content-flex="false" :merge-props="false" label="样例">
         <a-form-item
@@ -153,9 +153,8 @@ let form = ref({
   language: "",
   answer: "",
   content: "",
-  judgeCase: "",
   judgeConfig: {
-    memoryLimit: 128,
+    memoryLimit: 256,
     timeLimit: 1000,
   },
   sampleCase: [
@@ -172,16 +171,19 @@ let form = ref({
 const loadData = async () => {
   const id = route.query.id;
   if (!id) {
+    const res = await QuestionControllerService.getNextNumUsingGet();
+    if (res.code !== 0) {
+      message.error("加载失败，" + res.message);
+    }
     form.value = {
       title: "",
-      num: NaN,
+      num: toNumber(res.data),
       tags: [],
       language: "",
       answer: "",
       content: "",
-      judgeCase: "",
       judgeConfig: {
-        memoryLimit: 128,
+        memoryLimit: 256,
         timeLimit: 1000,
       },
       sampleCase: [
@@ -212,7 +214,7 @@ const loadData = async () => {
     }
     if (!form.value.judgeConfig) {
       form.value.judgeConfig = {
-        memoryLimit: 128,
+        memoryLimit: 256,
         timeLimit: 1000,
       };
     } else {
@@ -278,8 +280,11 @@ const doSubmit = async () => {
     if (res.code === 0) {
       message.success("创建成功");
       router.push({
-        path: "/questions",
-        replace: true,
+        path: "/judgeCase",
+        query: {
+          num: form.value.num,
+          title: form.value.title,
+        },
       });
     } else {
       message.error("创建失败，" + res.message);
@@ -287,19 +292,12 @@ const doSubmit = async () => {
   }
 };
 
-/**
- * 新增判题样例
- */
 const handleAdd = () => {
   form.value.sampleCase.push({
     input: "",
     output: "",
   });
 };
-
-/**
- * 删除判题样例
- */
 const handleDelete = (index: number) => {
   form.value.sampleCase.splice(index, 1);
 };
@@ -310,6 +308,16 @@ const onContentChange = (value: string) => {
 
 const onAnswerChange = (value: string) => {
   form.value.answer = value;
+};
+
+const manageJudgeCase = () => {
+  router.push({
+    path: "/judgeCase",
+    query: {
+      num: form.value.num,
+      title: form.value.title,
+    },
+  });
 };
 </script>
 

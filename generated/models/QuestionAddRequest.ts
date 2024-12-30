@@ -9,7 +9,6 @@ import type { SampleCase } from './SampleCase';
 export type QuestionAddRequest = {
     answer?: string;
     content?: string;
-    judgeCase?: string;
     judgeConfig?: JudgeConfig;
     language?: string;
     num?: number;

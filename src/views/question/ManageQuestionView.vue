@@ -80,9 +80,11 @@ const searchParams = ref({
 });
 
 const loadData = async () => {
-  const res = await QuestionControllerService.listQuestionVoByPageUsingPost(
-    searchParams.value
-  );
+  const res = await QuestionControllerService.listQuestionVoByPageUsingPost({
+    ...searchParams.value,
+    sortField: "num",
+    sortOrder: "ascend",
+  });
   if (res.code === 0) {
     dataList.value = res.data.records;
     total.value = toNumber(res.data.total);

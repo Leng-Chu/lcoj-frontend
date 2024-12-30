@@ -131,6 +131,23 @@ questionQueryRequest: QuestionQueryRequest,
     }
 
     /**
+     * getNextNum
+     * @returns BaseResponse_long_ OK
+     * @throws ApiError
+     */
+    public static getNextNumUsingGet(): CancelablePromise<BaseResponse_long_> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/question/next-num',
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+
+    /**
      * updateQuestion
      * @param questionUpdateRequest questionUpdateRequest
      * @returns BaseResponse_boolean_ OK

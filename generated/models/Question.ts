@@ -29,10 +29,6 @@ export type Question = {
      */
     isDelete?: number;
     /**
-     * 判题用例（url）
-     */
-    judgeCase?: string;
-    /**
      * 判题配置（json 对象）
      */
     judgeConfig?: string;

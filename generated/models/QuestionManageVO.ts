@@ -3,12 +3,15 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type QuestionListVO = {
+export type QuestionManageVO = {
     acceptedNum?: number;
+    createTime?: string;
     id?: number;
     num?: number;
-    status?: number;
     submitNum?: number;
     tags?: Array<string>;
     title?: string;
+    updateTime?: string;
+    userId?: number;
+    userName?: string;
 };

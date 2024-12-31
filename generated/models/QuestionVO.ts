@@ -12,6 +12,7 @@ export type QuestionVO = {
     judgeConfig?: JudgeConfig;
     num?: number;
     sampleCase?: Array<SampleCase>;
+    status?: number;
     tags?: Array<string>;
     title?: string;
 };

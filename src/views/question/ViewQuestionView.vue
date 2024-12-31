@@ -2,7 +2,18 @@
   <div id="viewQuestionView">
     <a-row :gutter="[24, 24]">
       <a-col :md="12" :xs="24" style="max-height: 80vh; overflow-y: auto">
-        <h1 v-if="question">{{ question.num }}. {{ question.title }}</h1>
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          <h1 v-if="question">{{ question.num }}. {{ question.title }}</h1>
+          <span v-if="question" class="status-text">
+            {{ getStatusText(question.status) }}
+          </span>
+        </div>
         <div v-if="question" style="display: flex; padding-bottom: 5px">
           <a-space style="padding-left: 17px">
             <a-descriptions v-if="question" :column="{ xs: 1, md: 2, lg: 3 }">
@@ -118,7 +129,18 @@ const loadData = async () => {
     message.error("加载失败，" + res.message);
   }
 };
-
+const getStatusText = (status: number) => {
+  switch (status) {
+    case 0:
+      return "尝试过";
+    case 1:
+      return "已通过";
+    case 2:
+      return "未尝试";
+    default:
+      return "未知状态";
+  }
+};
 const form = ref<QuestionSubmitAddRequest>({
   language: "cpp",
   code: "",
@@ -181,5 +203,10 @@ const changeCode = (value: string) => {
 
 #viewQuestionView .arco-space-horizontal .arco-space-item {
   margin-bottom: 0 !important;
+}
+
+.status-text {
+  font-size: 14px;
+  color: royalblue;
 }
 </style>

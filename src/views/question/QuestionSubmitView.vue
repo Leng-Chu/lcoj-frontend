@@ -180,30 +180,38 @@ const columns = [
   {
     title: "题号",
     slotName: "questionNum",
+    align: "center",
+    width: 80,
   },
   {
-    title: "题目标题",
+    title: "标题",
     slotName: "questionTitle",
+    width: 250,
   },
   {
     title: "编程语言",
     slotName: "language",
+    align: "center",
   },
   {
     title: "判题信息",
     slotName: "judgeInfo",
+    align: "center",
   },
   {
     title: "判题状态",
     slotName: "status",
+    align: "center",
   },
   {
     title: "提交者",
     dataIndex: "userName",
+    align: "center",
   },
   {
     title: "提交时间",
     slotName: "createTime",
+    align: "center",
   },
 ];
 
@@ -239,9 +247,9 @@ const formatStatus = (status: number) => {
     case 1:
       return "判题中";
     case 2:
-      return "判题成功";
+      return "成功";
     case 3:
-      return "判题失败";
+      return "失败";
     default:
       return "未知状态";
   }
@@ -267,52 +275,52 @@ const transformJudgeInfo = (judgeInfo: Record<string, any>) => {
       switch (judgeInfo[key]) {
         case 0:
           return {
-            label: key,
+            label: "result",
             value: "等待判题",
           };
         case 1:
           return {
-            label: key,
+            label: "result",
             value: "通过题目",
           };
         case 2:
           return {
-            label: key,
+            label: "result",
             value: "答案错误",
           };
         case 3:
           return {
-            label: key,
+            label: "result",
             value: "编译错误",
           };
         case 4:
           return {
-            label: key,
+            label: "result",
             value: "运行错误",
           };
         case 5:
           return {
-            label: key,
+            label: "result",
             value: "系统错误",
           };
         case 6:
           return {
-            label: key,
+            label: "result",
             value: "时间超限",
           };
         case 7:
           return {
-            label: key,
+            label: "result",
             value: "内存超限",
           };
         case 8:
           return {
-            label: key,
+            label: "result",
             value: "无测评数据",
           };
         default:
           return {
-            label: key,
+            label: "result",
             value: "未知状态",
           };
       }

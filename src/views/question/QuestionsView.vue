@@ -32,6 +32,30 @@
       }"
       @page-change="onPageChange"
     >
+      <template #num="{ record }">
+        <a-button
+          :style="{
+            backgroundColor:
+              record.status === 0
+                ? '#FF4444'
+                : record.status === 1
+                ? '#5cb85c'
+                : '#F2F3F5',
+            color: record.status === 2 ? 'black' : 'white',
+          }"
+          @click="toQuestionPage(record)"
+        >
+          {{ record.num }}
+        </a-button>
+      </template>
+      <template #title="{ record }">
+        <router-link
+          :to="{ path: `/view/question/${record.id}` }"
+          class="custom-link"
+        >
+          {{ record.title }}
+        </router-link>
+      </template>
       <template #tags="{ record }">
         <a-space wrap>
           <a-tag v-for="(tag, index) of record.tags" :key="index" color="green"
@@ -122,22 +146,30 @@ onMounted(() => {
 const columns = [
   {
     title: "题号",
-    dataIndex: "num",
+    slotName: "num",
+    align: "center",
+    width: 120,
   },
   {
     title: "标题",
-    dataIndex: "title",
+    slotName: "title",
+    width: 500,
   },
   {
     title: "标签",
     slotName: "tags",
+    align: "center",
+    width: 350,
   },
   {
     title: "通过率",
     slotName: "acceptedRate",
+    align: "center",
+    width: 200,
   },
   {
     slotName: "optional",
+    width: 100,
   },
 ];
 
@@ -176,5 +208,15 @@ const doSubmit = () => {
 #questionsView {
   max-width: 1280px;
   margin: 0 auto;
+}
+
+.custom-link {
+  color: #1890ff;
+  text-decoration: none;
+}
+
+.custom-link:hover {
+  text-decoration: underline;
+  cursor: pointer;
 }
 </style>

@@ -35,6 +35,22 @@
       }"
       @page-change="onPageChange"
     >
+      <template #num="{ record }">
+        <router-link
+          :to="{ path: `/view/question/${record.id}` }"
+          class="custom-link"
+        >
+          {{ record.num }}
+        </router-link>
+      </template>
+      <template #title="{ record }">
+        <router-link
+          :to="{ path: `/view/question/${record.id}` }"
+          class="custom-link"
+        >
+          {{ record.title }}
+        </router-link>
+      </template>
       <template #tags="{ record }">
         <a-space wrap>
           <a-tag v-for="(tag, index) of record.tags" :key="index" color="green"
@@ -80,11 +96,12 @@ const searchParams = ref({
 });
 
 const loadData = async () => {
-  const res = await QuestionControllerService.listQuestionVoByPageUsingPost({
-    ...searchParams.value,
-    sortField: "num",
-    sortOrder: "ascend",
-  });
+  const res =
+    await QuestionControllerService.listQuestionManageVoByPageUsingPost({
+      ...searchParams.value,
+      sortField: "num",
+      sortOrder: "ascend",
+    });
   if (res.code === 0) {
     dataList.value = res.data.records;
     total.value = toNumber(res.data.total);
@@ -111,36 +128,42 @@ onMounted(() => {
   loadData();
 });
 
-// {id: "1", title: "A+ D", content: "新的题目内容", tags: "["二叉树"]", answer: "新的答案", submitNum: 0,…}
-
 const columns = [
   {
     title: "题号",
-    dataIndex: "num",
+    slotName: "num",
+    align: "center",
+    width: 80,
   },
   {
     title: "标题",
-    dataIndex: "title",
+    slotName: "title",
+    width: 300,
   },
   {
     title: "标签",
     slotName: "tags",
+    align: "center",
   },
   {
     title: "创建者",
     dataIndex: "userName",
+    align: "center",
   },
   {
     title: "创建时间",
     slotName: "createTime",
+    align: "center",
   },
   {
     title: "更新时间",
     slotName: "updateTime",
+    align: "center",
   },
   {
     title: "操作",
     slotName: "optional",
+    align: "center",
   },
 ];
 
@@ -185,5 +208,15 @@ const doUpdate = (question: Question) => {
 #manageQuestionView {
   max-width: 1280px;
   margin: 0 auto;
+}
+
+.custom-link {
+  color: #1890ff;
+  text-decoration: none;
+}
+
+.custom-link:hover {
+  text-decoration: underline;
+  cursor: pointer;
 }
 </style>

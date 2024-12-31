@@ -5,6 +5,7 @@
 import type { BaseResponse_boolean_ } from '../models/BaseResponse_boolean_';
 import type { BaseResponse_long_ } from '../models/BaseResponse_long_';
 import type { BaseResponse_Page_QuestionListVO_ } from '../models/BaseResponse_Page_QuestionListVO_';
+import type { BaseResponse_Page_QuestionManageVO_ } from '../models/BaseResponse_Page_QuestionManageVO_';
 import type { BaseResponse_Question_ } from '../models/BaseResponse_Question_';
 import type { BaseResponse_QuestionVO_ } from '../models/BaseResponse_QuestionVO_';
 import type { DeleteRequest } from '../models/DeleteRequest';
@@ -121,6 +122,28 @@ questionQueryRequest: QuestionQueryRequest,
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/question/list/page/vo',
+            body: questionQueryRequest,
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+
+    /**
+     * listQuestionManageVOByPage
+     * @param questionQueryRequest questionQueryRequest
+     * @returns BaseResponse_Page_QuestionManageVO_ OK
+     * @returns any Created
+     * @throws ApiError
+     */
+    public static listQuestionManageVoByPageUsingPost(
+questionQueryRequest: QuestionQueryRequest,
+): CancelablePromise<BaseResponse_Page_QuestionManageVO_ | any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/question/manage/list/page/vo',
             body: questionQueryRequest,
             errors: {
                 401: `Unauthorized`,

@@ -3,8 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type JudgeInfo = {
+export type CaseInfo = {
+    expectOutput?: string;
+    input?: string;
     judgeResult?: number;
-    memory?: number;
-    time?: number;
+    message?: string;
+    wrongOutput?: string;
 };

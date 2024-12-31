@@ -48,8 +48,8 @@
               :style="{ width: '320px' }"
               placeholder="选择编程语言"
             >
-              <a-option value="java">Java</a-option>
               <a-option value="cpp">C++</a-option>
+              <a-option value="java">Java</a-option>
               <a-option value="python">Python</a-option>
             </a-select>
           </a-form-item>
@@ -60,9 +60,14 @@
           :value="form.code as string"
         />
         <a-divider size="0" />
-        <a-button style="min-width: 200px" type="primary" @click="doSubmit">
-          提交代码
-        </a-button>
+        <div style="display: flex; justify-content: space-between">
+          <a-button style="min-width: 150px" type="primary" @click="doSubmit">
+            提交代码
+          </a-button>
+          <a-button style="min-width: 150px" @click="goToSubmissionRecords">
+            提交记录
+          </a-button>
+        </div>
       </a-col>
     </a-row>
   </div>
@@ -80,6 +85,7 @@ import {
   QuestionVO,
 } from "../../../generated";
 import { useRouter } from "vue-router";
+import store from "@/store";
 
 interface Props {
   id: string;
@@ -114,7 +120,7 @@ const loadData = async () => {
 };
 
 const form = ref<QuestionSubmitAddRequest>({
-  language: "java",
+  language: "cpp",
   code: "",
 });
 
@@ -139,6 +145,20 @@ const doSubmit = async () => {
   } else {
     message.error("提交失败," + res.message);
   }
+};
+
+/**
+ * 跳转到提交记录页面
+ */
+const goToSubmissionRecords = () => {
+  const url = router.resolve({
+    path: "/question_submit",
+    query: {
+      questionNum: question.value?.num,
+      userName: store.state.user.loginUser?.userName,
+    },
+  }).href;
+  window.open(url, "_blank");
 };
 
 /**

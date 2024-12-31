@@ -16,6 +16,7 @@ export type { BaseResponse_Question_ } from './models/BaseResponse_Question_';
 export type { BaseResponse_QuestionVO_ } from './models/BaseResponse_QuestionVO_';
 export type { BaseResponse_UserVO_ } from './models/BaseResponse_UserVO_';
 export type { Case } from './models/Case';
+export type { CaseInfo } from './models/CaseInfo';
 export type { DeleteRequest } from './models/DeleteRequest';
 export type { File } from './models/File';
 export type { FileListVO } from './models/FileListVO';

@@ -2,7 +2,6 @@ import { RouteRecordRaw } from "vue-router";
 import UserLayout from "@/layouts/UserLayout.vue";
 import UserLoginView from "@/views/user/UserLoginView.vue";
 import UserRegisterView from "@/views/user/UserRegisterView.vue";
-import NoAuthView from "@/views/NoAuthView.vue";
 import ACCESS_ENUM from "@/access/accessEnum";
 import AddQuestionView from "@/views/question/AddQuestionView.vue";
 import ManageQuestionView from "@/views/question/ManageQuestionView.vue";
@@ -95,14 +94,6 @@ export const routes: Array<RouteRecordRaw> = [
     path: "/",
     name: "主页",
     component: QuestionsView,
-    meta: {
-      hideInMenu: true,
-    },
-  },
-  {
-    path: "/noAuth",
-    name: "无权限",
-    component: NoAuthView,
     meta: {
       hideInMenu: true,
     },

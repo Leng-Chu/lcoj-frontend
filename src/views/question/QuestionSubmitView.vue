@@ -25,8 +25,8 @@
           placeholder="选择语言"
         >
           <a-option value="">全选</a-option>
-          <a-option value="java">Java</a-option>
           <a-option value="cpp">C++</a-option>
+          <a-option value="java">Java</a-option>
           <a-option value="python">Python</a-option>
         </a-select>
       </a-form-item>
@@ -122,6 +122,9 @@ import {
 import message from "@arco-design/web-vue/es/message";
 import moment from "moment";
 import { toNumber } from "@vue/shared";
+import { useRoute } from "vue-router";
+
+const route = useRoute();
 
 const tableRef = ref();
 
@@ -132,6 +135,7 @@ const searchParams = ref<QuestionSubmitQueryRequest>({
   questionTitle: "",
   userName: "",
   language: "",
+  status: NaN,
   pageSize: 10,
   current: 1,
 });
@@ -162,6 +166,13 @@ watchEffect(() => {
  * 页面加载时，请求数据
  */
 onMounted(() => {
+  //如果是从其他页面跳转过来的，需要将参数设置到搜索框中
+  if (route.query.questionNum) {
+    searchParams.value.questionNum = toNumber(route.query.questionNum);
+  }
+  if (route.query.userName) {
+    searchParams.value.userName = route.query.userName as string;
+  }
   loadData();
 });
 
@@ -252,10 +263,60 @@ const transformJudgeInfo = (judgeInfo: Record<string, any>) => {
       };
     }
 
-    return {
-      label: key,
-      value: judgeInfo[key] !== null ? `${judgeInfo[key]}` : "等待判题",
-    };
+    if (key === "judgeResult") {
+      switch (judgeInfo[key]) {
+        case 0:
+          return {
+            label: key,
+            value: "等待判题",
+          };
+        case 1:
+          return {
+            label: key,
+            value: "通过题目",
+          };
+        case 2:
+          return {
+            label: key,
+            value: "答案错误",
+          };
+        case 3:
+          return {
+            label: key,
+            value: "编译错误",
+          };
+        case 4:
+          return {
+            label: key,
+            value: "运行错误",
+          };
+        case 5:
+          return {
+            label: key,
+            value: "系统错误",
+          };
+        case 6:
+          return {
+            label: key,
+            value: "时间超限",
+          };
+        case 7:
+          return {
+            label: key,
+            value: "内存超限",
+          };
+        case 8:
+          return {
+            label: key,
+            value: "无测评数据",
+          };
+        default:
+          return {
+            label: key,
+            value: "未知状态",
+          };
+      }
+    }
   });
 };
 </script>

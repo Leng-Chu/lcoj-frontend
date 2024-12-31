@@ -7,9 +7,9 @@
   <!--  <a-button @click="fillValue">填充值</a-button>-->
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import * as monaco from "monaco-editor";
-import { onMounted, ref, toRaw, withDefaults, defineProps, watch } from "vue";
+import { defineProps, onMounted, ref, toRaw, watch, withDefaults } from "vue";
 
 /**
  * 定义组件属性类型
@@ -25,7 +25,7 @@ interface Props {
  */
 const props = withDefaults(defineProps<Props>(), {
   value: () => "",
-  language: () => "java",
+  language: () => "cpp",
   handleChange: (v: string) => {
     console.log(v);
   },

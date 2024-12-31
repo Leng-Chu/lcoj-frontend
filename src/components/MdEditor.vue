@@ -13,6 +13,7 @@ import highlight from "@bytemd/plugin-highlight";
 import math from "@bytemd/plugin-math";
 import { Editor } from "@bytemd/vue-next";
 import { defineProps, withDefaults } from "vue";
+import "katex/dist/katex.css";
 
 /**
  * 定义组件属性类型

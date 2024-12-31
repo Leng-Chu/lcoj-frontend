@@ -8,6 +8,7 @@ import highlight from "@bytemd/plugin-highlight";
 import { Viewer } from "@bytemd/vue-next";
 import { defineProps, withDefaults } from "vue";
 import math from "@bytemd/plugin-math";
+import "katex/dist/katex.css";
 
 /**
  * 定义组件属性类型

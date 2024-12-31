@@ -64,8 +64,8 @@
           style="width: 400px"
         >
           <a-option value="none">不提供标程</a-option>
-          <a-option value="java">Java</a-option>
           <a-option value="cpp">C++</a-option>
+          <a-option value="java">Java</a-option>
           <a-option value="python">Python</a-option>
         </a-select>
       </a-form-item>

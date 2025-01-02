@@ -4,15 +4,16 @@
 /* eslint-disable */
 
 import type { CaseInfo } from './CaseInfo';
-import type { JudgeInfo } from './JudgeInfo';
 
 export type QuestionSubmitVO = {
     caseInfoList?: Array<CaseInfo>;
     code?: string;
     createTime?: string;
     id?: number;
-    judgeInfo?: JudgeInfo;
+    judgeResult?: number;
     language?: string;
+    maxMemory?: number;
+    maxTime?: number;
     questionId?: number;
     questionNum?: number;
     questionTitle?: string;

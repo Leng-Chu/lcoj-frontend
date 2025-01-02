@@ -5,12 +5,12 @@
 
 export type QuestionSubmitQueryRequest = {
     current?: number;
+    judgeResult?: number;
     language?: string;
     pageSize?: number;
     questionNum?: number;
     questionTitle?: string;
     sortField?: string;
     sortOrder?: string;
-    status?: number;
     userName?: string;
 };

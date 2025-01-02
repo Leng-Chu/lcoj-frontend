@@ -30,17 +30,22 @@
           <a-option value="python">Python</a-option>
         </a-select>
       </a-form-item>
-      <a-form-item field="status" label="判题状态" style="width: 200px">
+      <a-form-item field="judgeResult" label="判题结果" style="width: 200px">
         <a-select
-          v-model="searchParams.status"
+          v-model="searchParams.judgeResult"
           :style="{ width: '200px' }"
-          placeholder="选择状态"
+          placeholder="选择结果"
         >
           <a-option value="">全选</a-option>
-          <a-option value="0">待判题</a-option>
-          <a-option value="1">判题中</a-option>
-          <a-option value="2">成功</a-option>
-          <a-option value="3">失败</a-option>
+          <a-option value="0">等待判题</a-option>
+          <a-option value="1">通过题目</a-option>
+          <a-option value="2">答案错误</a-option>
+          <a-option value="3">编译错误</a-option>
+          <a-option value="4">运行错误</a-option>
+          <a-option value="5">系统错误</a-option>
+          <a-option value="6">时间超限</a-option>
+          <a-option value="7">内存超限</a-option>
+          <a-option value="8">无测评数据</a-option>
         </a-select>
       </a-form-item>
       <a-form-item>
@@ -90,13 +95,16 @@
       </template>
       <template #judgeInfo="{ record }">
         <a-descriptions
-          :data="transformJudgeInfo(record.judgeInfo)"
+          :data="transformJudgeInfo(record.maxTime, record.maxMemory)"
           layout="inline-horizontal"
           size="small"
         />
       </template>
       <template #status="{ record }">
         {{ formatStatus(record.status) }}
+      </template>
+      <template #judgeResult="{ record }">
+        {{ formatJudgeResult(record.judgeResult) }}
       </template>
       <template #createTime="{ record }">
         {{ moment(record.createTime).format("YYYY-MM-DD HH:mm:ss") }}
@@ -135,7 +143,7 @@ const searchParams = ref<QuestionSubmitQueryRequest>({
   questionTitle: "",
   userName: "",
   language: "",
-  status: NaN,
+  judgeResult: NaN,
   pageSize: 10,
   current: 1,
 });
@@ -189,29 +197,36 @@ const columns = [
     width: 250,
   },
   {
+    title: "提交者",
+    dataIndex: "userName",
+    align: "center",
+  },
+  {
     title: "编程语言",
     slotName: "language",
+    align: "center",
+  },
+  {
+    title: "评测状态",
+    slotName: "status",
+    align: "center",
+  },
+  {
+    title: "判题结果",
+    slotName: "judgeResult",
     align: "center",
   },
   {
     title: "判题信息",
     slotName: "judgeInfo",
     align: "center",
-  },
-  {
-    title: "判题状态",
-    slotName: "status",
-    align: "center",
-  },
-  {
-    title: "提交者",
-    dataIndex: "userName",
-    align: "center",
+    width: 280,
   },
   {
     title: "提交时间",
     slotName: "createTime",
     align: "center",
+    width: 180,
   },
 ];
 
@@ -247,85 +262,57 @@ const formatStatus = (status: number) => {
     case 1:
       return "判题中";
     case 2:
-      return "成功";
+      return "判题成功";
     case 3:
-      return "失败";
+      return "判题失败";
     default:
       return "未知状态";
   }
 };
-// 将 judgeInfo 对象转换为 descriptions 需要的数组形式
-const transformJudgeInfo = (judgeInfo: Record<string, any>) => {
-  return Object.keys(judgeInfo).map((key) => {
-    if (key === "time") {
-      return {
-        label: key,
-        value: judgeInfo[key] !== null ? `${judgeInfo[key]}ms` : "0ms",
-      };
-    }
-
-    if (key === "memory") {
-      return {
-        label: key,
-        value: judgeInfo[key] !== null ? `${judgeInfo[key]}KB` : "0KB",
-      };
-    }
-
-    if (key === "judgeResult") {
-      switch (judgeInfo[key]) {
-        case 0:
-          return {
-            label: "result",
-            value: "等待判题",
-          };
-        case 1:
-          return {
-            label: "result",
-            value: "通过题目",
-          };
-        case 2:
-          return {
-            label: "result",
-            value: "答案错误",
-          };
-        case 3:
-          return {
-            label: "result",
-            value: "编译错误",
-          };
-        case 4:
-          return {
-            label: "result",
-            value: "运行错误",
-          };
-        case 5:
-          return {
-            label: "result",
-            value: "系统错误",
-          };
-        case 6:
-          return {
-            label: "result",
-            value: "时间超限",
-          };
-        case 7:
-          return {
-            label: "result",
-            value: "内存超限",
-          };
-        case 8:
-          return {
-            label: "result",
-            value: "无测评数据",
-          };
-        default:
-          return {
-            label: "result",
-            value: "未知状态",
-          };
-      }
-    }
-  });
+// 根据 judgeResult 返回对应的状态字符串
+const formatJudgeResult = (judgeResult: number) => {
+  switch (judgeResult) {
+    case 0:
+      return "等待判题";
+    case 1:
+      return "通过题目";
+    case 2:
+      return "答案错误";
+    case 3:
+      return "编译错误";
+    case 4:
+      return "运行错误";
+    case 5:
+      return "系统错误";
+    case 6:
+      return "时间超限";
+    case 7:
+      return "内存超限";
+    case 8:
+      return "无测评数据";
+    default:
+      return "未知状态";
+  }
+};
+// 将 maxTime 和 maxMemory 对象转换为 descriptions 需要的数组形式
+const transformJudgeInfo = (
+  maxTime: number | null,
+  maxMemory: number | null
+) => {
+  return [
+    {
+      label: "maxTime",
+      value:
+        maxTime !== null && maxTime !== undefined ? `${maxTime}ms` : "null",
+    },
+    {
+      label: "maxMemory",
+      value:
+        maxMemory !== null && maxMemory !== undefined
+          ? `${maxMemory}KB`
+          : "null",
+    },
+  ];
 };
 </script>
 

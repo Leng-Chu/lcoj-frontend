@@ -23,7 +23,6 @@ export type { File } from './models/File';
 export type { FileListVO } from './models/FileListVO';
 export type { InputStream } from './models/InputStream';
 export type { JudgeConfig } from './models/JudgeConfig';
-export type { JudgeInfo } from './models/JudgeInfo';
 export type { OrderItem } from './models/OrderItem';
 export type { Page_QuestionListVO_ } from './models/Page_QuestionListVO_';
 export type { Page_QuestionManageVO_ } from './models/Page_QuestionManageVO_';

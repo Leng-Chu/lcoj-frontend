@@ -7,6 +7,8 @@ export type CaseInfo = {
     expectOutput?: string;
     input?: string;
     judgeResult?: number;
+    memory?: number;
     message?: string;
+    time?: number;
     wrongOutput?: string;
 };

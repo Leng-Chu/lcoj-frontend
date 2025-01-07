@@ -4,6 +4,8 @@
 /* eslint-disable */
 
 export type CaseInfo = {
+    caseId?: number;
+    dataMessage?: string;
     expectOutput?: string;
     input?: string;
     judgeResult?: number;

@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { BaseResponse_boolean_ } from '../models/BaseResponse_boolean_';
 import type { BaseResponse_long_ } from '../models/BaseResponse_long_';
 import type { BaseResponse_Page_QuestionSubmitVO_ } from '../models/BaseResponse_Page_QuestionSubmitVO_';
 import type { QuestionSubmitAddRequest } from '../models/QuestionSubmitAddRequest';
@@ -49,6 +50,30 @@ questionSubmitQueryRequest: QuestionSubmitQueryRequest,
             method: 'POST',
             url: '/api/question-submit/list/page',
             body: questionSubmitQueryRequest,
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+
+    /**
+     * rejudge
+     * @param questionSubmitId questionSubmitId
+     * @returns BaseResponse_boolean_ OK
+     * @returns any Created
+     * @throws ApiError
+     */
+    public static rejudgeUsingPost(
+questionSubmitId?: number,
+): CancelablePromise<BaseResponse_boolean_ | any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/question-submit/rejudge',
+            query: {
+                'questionSubmitId': questionSubmitId,
+            },
             errors: {
                 401: `Unauthorized`,
                 403: `Forbidden`,

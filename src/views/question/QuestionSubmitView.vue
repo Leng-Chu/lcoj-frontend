@@ -100,14 +100,16 @@
           size="small"
         />
       </template>
-      <template #status="{ record }">
-        {{ formatStatus(record.status) }}
-      </template>
       <template #judgeResult="{ record }">
         {{ formatJudgeResult(record.judgeResult) }}
       </template>
       <template #createTime="{ record }">
         {{ moment(record.createTime).format("YYYY-MM-DD HH:mm:ss") }}
+      </template>
+      <template #actions="{ record }">
+        <a-button v-if="isAdmin" type="primary" @click="rejudge(record.id)">
+          重判
+        </a-button>
       </template>
     </a-table>
     <a-modal
@@ -131,11 +133,14 @@ import message from "@arco-design/web-vue/es/message";
 import moment from "moment";
 import { toNumber } from "@vue/shared";
 import { useRoute } from "vue-router";
+import ACCESS_ENUM from "@/access/accessEnum";
+import checkAccess from "@/access/checkAccess";
+import store from "@/store";
 
 const route = useRoute();
 
 const tableRef = ref();
-
+const isAdmin = ref(false);
 const dataList = ref([]);
 const total = ref(0);
 const searchParams = ref<QuestionSubmitQueryRequest>({
@@ -147,8 +152,64 @@ const searchParams = ref<QuestionSubmitQueryRequest>({
   pageSize: 10,
   current: 1,
 });
+const columns = ref([
+  {
+    title: "题号",
+    slotName: "questionNum",
+    align: "center",
+    width: 80,
+  },
+  {
+    title: "标题",
+    slotName: "questionTitle",
+    width: 250,
+  },
+  {
+    title: "提交者",
+    dataIndex: "userName",
+    align: "center",
+    width: 100,
+  },
+  {
+    title: "编程语言",
+    slotName: "language",
+    align: "center",
+    width: 100,
+  },
+  {
+    title: "判题结果",
+    slotName: "judgeResult",
+    align: "center",
+    width: 100,
+  },
+  {
+    title: "判题信息",
+    slotName: "judgeInfo",
+    align: "center",
+    width: 320,
+  },
+  {
+    title: "提交时间",
+    slotName: "createTime",
+    align: "center",
+    width: 180,
+  },
+]);
 
 const loadData = async () => {
+  isAdmin.value = checkAccess(store.state.user.loginUser, ACCESS_ENUM.ADMIN);
+  if (
+    isAdmin.value &&
+    !columns.value.some((col) => col.slotName === "actions")
+  ) {
+    columns.value.push({
+      title: "操作",
+      slotName: "actions",
+      align: "center",
+      width: 100,
+    });
+  }
+  console.log(isAdmin.value);
   const res =
     await QuestionSubmitControllerService.listQuestionSubmitByPageUsingPost({
       ...searchParams.value,
@@ -184,52 +245,6 @@ onMounted(() => {
   loadData();
 });
 
-const columns = [
-  {
-    title: "题号",
-    slotName: "questionNum",
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "标题",
-    slotName: "questionTitle",
-    width: 250,
-  },
-  {
-    title: "提交者",
-    dataIndex: "userName",
-    align: "center",
-  },
-  {
-    title: "编程语言",
-    slotName: "language",
-    align: "center",
-  },
-  {
-    title: "评测状态",
-    slotName: "status",
-    align: "center",
-  },
-  {
-    title: "判题结果",
-    slotName: "judgeResult",
-    align: "center",
-  },
-  {
-    title: "判题信息",
-    slotName: "judgeInfo",
-    align: "center",
-    width: 280,
-  },
-  {
-    title: "提交时间",
-    slotName: "createTime",
-    align: "center",
-    width: 180,
-  },
-];
-
 const onPageChange = (page: number) => {
   searchParams.value = {
     ...searchParams.value,
@@ -239,6 +254,7 @@ const onPageChange = (page: number) => {
 
 const isCodeModalVisible = ref(false);
 const codeContent = ref("");
+
 const showCode = (code: string) => {
   codeContent.value = code;
   isCodeModalVisible.value = true;
@@ -254,21 +270,6 @@ const doSubmit = () => {
     current: 1,
   };
 };
-// 根据 status 返回对应的状态字符串
-const formatStatus = (status: number) => {
-  switch (status) {
-    case 0:
-      return "待判题";
-    case 1:
-      return "判题中";
-    case 2:
-      return "判题成功";
-    case 3:
-      return "判题失败";
-    default:
-      return "未知状态";
-  }
-};
 // 根据 judgeResult 返回对应的状态字符串
 const formatJudgeResult = (judgeResult: number) => {
   switch (judgeResult) {
@@ -283,11 +284,11 @@ const formatJudgeResult = (judgeResult: number) => {
     case 4:
       return "运行错误";
     case 5:
-      return "系统错误";
-    case 6:
       return "时间超限";
-    case 7:
+    case 6:
       return "内存超限";
+    case 7:
+      return "系统错误";
     case 8:
       return "无测评数据";
     default:
@@ -313,6 +314,12 @@ const transformJudgeInfo = (
           : "null",
     },
   ];
+};
+const rejudge = async (id: number) => {
+  // 这里添加重判的逻辑
+  console.log(`重判题目ID: ${id}`);
+  await QuestionSubmitControllerService.rejudgeUsingPost(id);
+  await loadData();
 };
 </script>
 

@@ -107,7 +107,11 @@
         {{ moment(record.createTime).format("YYYY-MM-DD HH:mm:ss") }}
       </template>
       <template #actions="{ record }">
-        <a-button v-if="isAdmin" type="primary" @click="rejudge(record.id)">
+        <a-button
+          v-if="isAdmin"
+          type="primary"
+          @click="QuestionSubmitControllerService.rejudgeUsingPost(record.id)"
+        >
           重判
         </a-button>
       </template>
@@ -124,7 +128,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, watchEffect } from "vue";
+import { onMounted, onUnmounted, ref, watchEffect } from "vue";
 import {
   QuestionSubmitControllerService,
   QuestionSubmitQueryRequest,
@@ -138,7 +142,7 @@ import checkAccess from "@/access/checkAccess";
 import store from "@/store";
 
 const route = useRoute();
-
+const wsRef = ref();
 const tableRef = ref();
 const isAdmin = ref(false);
 const dataList = ref([]);
@@ -209,7 +213,6 @@ const loadData = async () => {
       width: 100,
     });
   }
-  console.log(isAdmin.value);
   const res =
     await QuestionSubmitControllerService.listQuestionSubmitByPageUsingPost({
       ...searchParams.value,
@@ -242,7 +245,21 @@ onMounted(() => {
   if (route.query.userName) {
     searchParams.value.userName = route.query.userName as string;
   }
-  loadData();
+  // 建立 WebSocket 连接
+  var clientId = Math.random().toString(36).substr(2);
+  const ws = new WebSocket("ws://localhost:8101/api/ws/" + clientId);
+  ws.onmessage = (event) => {
+    console.log("WebSocket message received:", event.data);
+    loadData();
+  };
+  wsRef.value = ws;
+});
+
+// 组件卸载时关闭 WebSocket 连接
+onUnmounted(() => {
+  if (wsRef.value) {
+    wsRef.value.close();
+  }
 });
 
 const onPageChange = (page: number) => {
@@ -314,12 +331,6 @@ const transformJudgeInfo = (
           : "null",
     },
   ];
-};
-const rejudge = async (id: number) => {
-  // 这里添加重判的逻辑
-  console.log(`重判题目ID: ${id}`);
-  await QuestionSubmitControllerService.rejudgeUsingPost(id);
-  await loadData();
 };
 </script>
 

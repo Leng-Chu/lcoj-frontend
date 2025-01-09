@@ -85,7 +85,7 @@
         <a
           v-if="record.code"
           class="custom-link"
-          @click="showCode(record.code)"
+          @click="showCode(record.code, record.language)"
         >
           {{ record.language }}
         </a>
@@ -93,15 +93,21 @@
           {{ record.language }}
         </span>
       </template>
+      <template #judgeResult="{ record }">
+        <a
+          :style="{ color: judgeResultColor(record.judgeResult) }"
+          class="custom-link"
+          @click="showJudgeResult(record.caseInfoList)"
+        >
+          {{ formatJudgeResult(record.judgeResult) }}
+        </a>
+      </template>
       <template #judgeInfo="{ record }">
         <a-descriptions
           :data="transformJudgeInfo(record.maxTime, record.maxMemory)"
           layout="inline-horizontal"
           size="small"
         />
-      </template>
-      <template #judgeResult="{ record }">
-        {{ formatJudgeResult(record.judgeResult) }}
       </template>
       <template #createTime="{ record }">
         {{ moment(record.createTime).format("YYYY-MM-DD HH:mm:ss") }}
@@ -122,7 +128,67 @@
       title="Code"
       width="800px"
     >
-      <pre>{{ codeContent }}</pre>
+      <!--   展示codeContent   -->
+      <CodeEditor
+        :handleChange="() => {}"
+        :language="codeLanguage"
+        :readOnly="true"
+        :value="codeContent"
+      />
+    </a-modal>
+    <a-modal
+      v-model:visible="isJudgeResultModalVisible"
+      :hide-cancel="true"
+      title="判题结果"
+      width="1000px"
+    >
+      <a-table
+        :ref="caseRef"
+        :columns="caseColumns"
+        :data="caseInfoList"
+        :pagination="false"
+        :scroll="{ x: '100%', y: 400 }"
+        :scrollbar="true"
+      >
+        <template #caseResult="{ record }">
+          <span :style="{ color: judgeResultColor(record.judgeResult) }">
+            {{ formatJudgeResult(record.judgeResult) }}
+          </span>
+        </template>
+        <template #caseInfo="{ record }">
+          <a-descriptions
+            :data="transformJudgeInfo(record.time, record.memory)"
+            layout="inline-horizontal"
+            size="small"
+          />
+        </template>
+        <template #message="{ record }">
+          <template v-if="record.input">
+            <a-tabs size="mini">
+              <a-tab-pane key="1" title="输入数据">
+                <span style="white-space: pre-wrap">
+                  {{ record.input }}
+                </span>
+              </a-tab-pane>
+              <a-tab-pane key="2" title="正确输出">
+                <span style="white-space: pre-wrap">
+                  {{ record.expectOutput }}
+                </span>
+              </a-tab-pane>
+              <a-tab-pane key="3" title="你的输出">
+                <span style="white-space: pre-wrap">
+                  {{ record.wrongOutput }}
+                </span>
+              </a-tab-pane>
+            </a-tabs>
+          </template>
+          <template v-else>
+            <span style="white-space: pre-wrap">
+              {{ record.message }}
+            </span>
+          </template>
+        </template>
+      </a-table>
     </a-modal>
   </div>
 </template>
@@ -130,6 +196,7 @@
 <script lang="ts" setup>
 import { onMounted, onUnmounted, ref, watchEffect } from "vue";
 import {
+  CaseInfo,
   QuestionSubmitControllerService,
   QuestionSubmitQueryRequest,
 } from "../../../generated";
@@ -139,11 +206,13 @@ import { toNumber } from "@vue/shared";
 import { useRoute } from "vue-router";
 import ACCESS_ENUM from "@/access/accessEnum";
 import checkAccess from "@/access/checkAccess";
+import CodeEditor from "@/components/CodeEditor.vue";
 import store from "@/store";
 
 const route = useRoute();
 const wsRef = ref();
 const tableRef = ref();
+const caseRef = ref();
 const isAdmin = ref(false);
 const dataList = ref([]);
 const total = ref(0);
@@ -190,13 +259,38 @@ const columns = ref([
     title: "判题信息",
     slotName: "judgeInfo",
     align: "center",
-    width: 320,
+    width: 330,
   },
   {
     title: "提交时间",
     slotName: "createTime",
     align: "center",
-    width: 180,
+    width: 170,
+  },
+]);
+
+const caseColumns = ref([
+  {
+    dataIndex: "caseId",
+    title: "编号",
+    align: "center",
+    width: 70,
+  },
+  {
+    slotName: "caseResult",
+    title: "判题结果",
+    align: "center",
+    width: 100,
+  },
+  {
+    slotName: "caseInfo",
+    title: "判题信息",
+    align: "center",
+    width: 330,
+  },
+  {
+    slotName: "message",
+    title: "错误信息",
   },
 ]);
 
@@ -271,10 +365,18 @@ const onPageChange = (page: number) => {
 
 const isCodeModalVisible = ref(false);
 const codeContent = ref("");
+const codeLanguage = ref("");
 
-const showCode = (code: string) => {
+const showCode = (code: string, language: string) => {
   codeContent.value = code;
+  codeLanguage.value = language;
   isCodeModalVisible.value = true;
+};
+const isJudgeResultModalVisible = ref(false);
+const caseInfoList = ref<CaseInfo[]>([]);
+const showJudgeResult = (cases: CaseInfo[]) => {
+  caseInfoList.value = cases;
+  isJudgeResultModalVisible.value = true;
 };
 
 /**
@@ -310,6 +412,17 @@ const formatJudgeResult = (judgeResult: number) => {
       return "无测评数据";
     default:
       return "未知状态";
+  }
+};
+
+const judgeResultColor = (judgeResult: number) => {
+  switch (judgeResult) {
+    case 0:
+      return "black";
+    case 1:
+      return "green";
+    default:
+      return "red";
   }
 };
 // 将 maxTime 和 maxMemory 对象转换为 descriptions 需要的数组形式

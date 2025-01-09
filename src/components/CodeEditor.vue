@@ -18,6 +18,7 @@ interface Props {
   value: string;
   language?: string;
   handleChange: (v: string) => void;
+  readOnly?: boolean;
 }
 
 /**
@@ -29,6 +30,7 @@ const props = withDefaults(defineProps<Props>(), {
   handleChange: (v: string) => {
     console.log(v);
   },
+  readOnly: () => false,
 });
 
 const codeEditorRef = ref();
@@ -54,6 +56,15 @@ watch(
   }
 );
 
+watch(
+  () => props.value,
+  (newValue) => {
+    if (codeEditor.value && newValue !== toRaw(codeEditor.value).getValue()) {
+      toRaw(codeEditor.value).setValue(newValue);
+    }
+  }
+);
+
 onMounted(() => {
   if (!codeEditorRef.value) {
     return;
@@ -67,7 +78,7 @@ onMounted(() => {
     minimap: {
       enabled: true,
     },
-    readOnly: false,
+    readOnly: props.readOnly,
     theme: "vs-dark",
     // lineNumbers: "off",
     // roundedSelection: false,

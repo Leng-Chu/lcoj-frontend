@@ -3,6 +3,7 @@
     <h1>管理测试用例 - {{ name }}</h1>
     <br />
     <a-upload
+      :action="`${base}/api/file/upload`"
       :auto-upload="true"
       :data="{ num }"
       :draggable="true"
@@ -11,7 +12,6 @@
       :show-file-list="false"
       :tip="`最多允许上传100个文件；文件必须以.in或.out或.ans结尾，同一测试用例的文件名相对应；文件大小不能超过100MB`"
       accept=".in,.out,.ans"
-      action="http://localhost:8101/api/file/upload"
       style="width: 1074px"
       @change="loadData"
       @before-upload="beforeUpload"
@@ -64,7 +64,7 @@
 import { onMounted, reactive } from "vue";
 import { useRoute } from "vue-router";
 import message from "@arco-design/web-vue/es/message";
-import { Case, FileControllerService } from "../../../generated";
+import { Case, FileControllerService, OpenAPI } from "../../../generated";
 import { toNumber } from "@vue/shared";
 import axios from "axios";
 
@@ -105,6 +105,7 @@ const column2 = [
     width: 176.5,
   },
 ];
+const base = OpenAPI.BASE;
 const data1 = reactive<Case[]>([]);
 const data2 = reactive<Case[]>([]);
 const num = toNumber(route.query.num);
@@ -161,12 +162,12 @@ const download = async (url: string, filename: string) => {
 };
 
 const downloadFile = async (file: Case) => {
-  const url = `http://localhost:8101/api/file/download?filename=${file.name}&num=${num}`;
+  const url = `${base}/api/file/download?filename=${file.name}&num=${num}`;
   await download(url, file.name as string);
 };
 
 const downloadAllFiles = async () => {
-  const url = `http://localhost:8101/api/file/downloadAll?num=${num}`;
+  const url = `${base}/api/file/downloadAll?num=${num}`;
   await download(url, `${num}.zip`);
 };
 

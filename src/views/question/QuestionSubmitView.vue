@@ -197,6 +197,7 @@
 import { onMounted, onUnmounted, ref, watchEffect } from "vue";
 import {
   CaseInfo,
+  OpenAPI,
   QuestionSubmitControllerService,
   QuestionSubmitQueryRequest,
 } from "../../../generated";
@@ -341,7 +342,9 @@ onMounted(() => {
   }
   // 建立 WebSocket 连接
   var clientId = Math.random().toString(36).substr(2);
-  const ws = new WebSocket("ws://localhost:8101/api/ws/" + clientId);
+  const ws = new WebSocket(
+    `${OpenAPI.BASE.replace("http", "ws")}/api/ws/${clientId}`
+  );
   ws.onmessage = (event) => {
     console.log("WebSocket message received:", event.data);
     loadData();

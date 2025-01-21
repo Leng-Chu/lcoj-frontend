@@ -42,9 +42,9 @@
           <a-option value="2">答案错误</a-option>
           <a-option value="3">编译错误</a-option>
           <a-option value="4">运行错误</a-option>
-          <a-option value="5">系统错误</a-option>
-          <a-option value="6">时间超限</a-option>
-          <a-option value="7">内存超限</a-option>
+          <a-option value="5">时间超限</a-option>
+          <a-option value="6">内存超限</a-option>
+          <a-option value="7">系统错误</a-option>
           <a-option value="8">无测评数据</a-option>
         </a-select>
       </a-form-item>
@@ -95,12 +95,16 @@
       </template>
       <template #judgeResult="{ record }">
         <a
+          v-if="record.caseInfoList"
           :style="{ color: judgeResultColor(record.judgeResult) }"
           class="custom-link"
           @click="showJudgeResult(record.caseInfoList)"
         >
           {{ formatJudgeResult(record.judgeResult) }}
         </a>
+        <span v-else :style="{ color: judgeResultColor(record.judgeResult) }">
+          {{ formatJudgeResult(record.judgeResult) }}
+        </span>
       </template>
       <template #judgeInfo="{ record }">
         <a-descriptions
@@ -223,7 +227,7 @@ const searchParams = ref<QuestionSubmitQueryRequest>({
   userName: "",
   language: "",
   judgeResult: NaN,
-  pageSize: 10,
+  pageSize: 20,
   current: 1,
 });
 const columns = ref([

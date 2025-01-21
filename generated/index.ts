@@ -29,6 +29,7 @@ export type { Page_QuestionManageVO_ } from './models/Page_QuestionManageVO_';
 export type { Page_QuestionSubmitVO_ } from './models/Page_QuestionSubmitVO_';
 export type { Question } from './models/Question';
 export type { QuestionAddRequest } from './models/QuestionAddRequest';
+export type { QuestionAdminAddRequest } from './models/QuestionAdminAddRequest';
 export type { QuestionListVO } from './models/QuestionListVO';
 export type { QuestionManageVO } from './models/QuestionManageVO';
 export type { QuestionQueryRequest } from './models/QuestionQueryRequest';

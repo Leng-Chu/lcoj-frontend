@@ -10,6 +10,7 @@ import type { BaseResponse_Question_ } from '../models/BaseResponse_Question_';
 import type { BaseResponse_QuestionVO_ } from '../models/BaseResponse_QuestionVO_';
 import type { DeleteRequest } from '../models/DeleteRequest';
 import type { QuestionAddRequest } from '../models/QuestionAddRequest';
+import type { QuestionAdminAddRequest } from '../models/QuestionAdminAddRequest';
 import type { QuestionQueryRequest } from '../models/QuestionQueryRequest';
 import type { QuestionUpdateRequest } from '../models/QuestionUpdateRequest';
 
@@ -33,6 +34,52 @@ questionAddRequest: QuestionAddRequest,
             method: 'POST',
             url: '/api/question/add',
             body: questionAddRequest,
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+
+    /**
+     * adminAddQuestion
+     * @param questionAdminAddRequest questionAdminAddRequest
+     * @returns BaseResponse_long_ OK
+     * @returns any Created
+     * @throws ApiError
+     */
+    public static adminAddQuestionUsingPost(
+questionAdminAddRequest: QuestionAdminAddRequest,
+): CancelablePromise<BaseResponse_long_ | any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/question/admin/add',
+            body: questionAdminAddRequest,
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+
+    /**
+     * createOutputFiles
+     * @param num num
+     * @returns BaseResponse_boolean_ OK
+     * @returns any Created
+     * @throws ApiError
+     */
+    public static createOutputFilesUsingPost(
+num: number,
+): CancelablePromise<BaseResponse_boolean_ | any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/question/create-output',
+            query: {
+                'num': num,
+            },
             errors: {
                 401: `Unauthorized`,
                 403: `Forbidden`,

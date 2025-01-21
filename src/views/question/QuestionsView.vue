@@ -104,7 +104,7 @@ const searchParams = ref<QuestionQueryRequest>({
   num: NaN,
   title: "",
   tags: [],
-  pageSize: 8,
+  pageSize: 20,
   current: 1,
 });
 

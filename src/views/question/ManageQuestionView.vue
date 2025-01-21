@@ -91,7 +91,7 @@ const searchParams = ref({
   title: "",
   userName: "",
   tags: [],
-  pageSize: 10,
+  pageSize: 20,
   current: 1,
 });
 

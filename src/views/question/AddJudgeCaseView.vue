@@ -27,6 +27,9 @@
       <a-button status="success" type="outline" @click="downloadAllFiles"
         >下载全部测试数据
       </a-button>
+      <a-button status="warning" type="outline" @click="createOutputFiles"
+        >生成输出数据
+      </a-button>
       <a-button status="danger" type="outline" @click="deleteAllFiles"
         >删除全部测试数据
       </a-button>
@@ -61,10 +64,15 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, reactive } from "vue";
+import { onMounted, onUnmounted, reactive, ref } from "vue";
 import { useRoute } from "vue-router";
 import message from "@arco-design/web-vue/es/message";
-import { Case, FileControllerService, OpenAPI } from "../../../generated";
+import {
+  Case,
+  FileControllerService,
+  OpenAPI,
+  QuestionControllerService,
+} from "../../../generated";
 import { toNumber } from "@vue/shared";
 import axios from "axios";
 
@@ -105,6 +113,7 @@ const column2 = [
     width: 176.5,
   },
 ];
+const wsRef = ref();
 const base = OpenAPI.BASE;
 const data1 = reactive<Case[]>([]);
 const data2 = reactive<Case[]>([]);
@@ -125,7 +134,29 @@ const loadData = async () => {
   }
 };
 onMounted(() => {
+  var clientId = Math.random().toString(36).substr(2);
+  clientId = clientId + ":" + num;
+  const ws = new WebSocket(
+    `${OpenAPI.BASE.replace("http", "ws")}/api/ws/${clientId}`
+  );
+  ws.onmessage = (event) => {
+    if (event.data === "生成输出数据成功") {
+      message.success(event.data);
+      loadData();
+    } else if (event.data === "等待生成输出数据") {
+      message.info(event.data);
+    } else {
+      message.error(event.data);
+    }
+  };
+  wsRef.value = ws;
   loadData();
+});
+
+onUnmounted(() => {
+  if (wsRef.value) {
+    wsRef.value.close();
+  }
 });
 
 const beforeUpload = (file: File) => {
@@ -169,6 +200,10 @@ const downloadFile = async (file: Case) => {
 const downloadAllFiles = async () => {
   const url = `${base}/api/file/downloadAll?num=${num}`;
   await download(url, `${num}.zip`);
+};
+
+const createOutputFiles = async () => {
+  await QuestionControllerService.createOutputFilesUsingPost(num);
 };
 
 const deleteFile = async (file: Case) => {

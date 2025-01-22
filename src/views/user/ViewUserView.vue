@@ -2,8 +2,8 @@
   <div id="viewUserView">
     <h1>个人信息 - {{ store.state.user.loginUser.userName }}</h1>
     <br />
-    <a-space :size="'large'">
-      <a-list :data="dataList" :hoverable="true" style="width: 830px">
+    <a-space :size="'large'" align="start">
+      <a-list :data="dataList" :hoverable="true" style="width: 805px">
         <template #header><span class="header-text">最近提交</span></template>
         <template #item="{ item: x }">
           <a-list-item>

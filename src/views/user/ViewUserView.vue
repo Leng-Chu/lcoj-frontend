@@ -57,7 +57,7 @@
       </a-list>
     </a-space>
     <a-divider />
-    <h3>已解答题目</h3>
+    <h3>{{ "已解答题目 ( " + acceptList.length + " )" }}</h3>
     <div class="question-links-container">
       <router-link
         v-for="question in acceptList"
@@ -69,7 +69,7 @@
       </router-link>
     </div>
     <a-divider />
-    <h3>尝试过的题目</h3>
+    <h3>{{ "尝试过的题目 ( " + failList.length + " )" }}</h3>
     <div class="question-links-container">
       <router-link
         v-for="question in failList"

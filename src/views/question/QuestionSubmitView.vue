@@ -198,7 +198,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onUnmounted, ref, watchEffect } from "vue";
+import { onMounted, onUnmounted, ref, watch } from "vue";
 import {
   CaseInfo,
   OpenAPI,
@@ -329,20 +329,24 @@ const loadData = async () => {
 /**
  * 监听 searchParams 变量，改变时触发页面的重新加载
  */
-watchEffect(() => {
-  loadData();
-});
+watch(
+  () => searchParams.value,
+  () => {
+    loadData();
+  },
+  { deep: true }
+);
 
 /**
  * 页面加载时，请求数据
  */
 onMounted(() => {
   //如果是从其他页面跳转过来的，需要将参数设置到搜索框中
-  if (route.query.questionNum) {
+  if (route.query.questionNum && route.query.userName) {
     searchParams.value.questionNum = toNumber(route.query.questionNum);
-  }
-  if (route.query.userName) {
     searchParams.value.userName = route.query.userName as string;
+  } else {
+    loadData();
   }
   // 建立 WebSocket 连接
   var clientId = Math.random().toString(36).substr(2);

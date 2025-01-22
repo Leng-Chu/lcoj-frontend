@@ -3,8 +3,7 @@
     <a-layout style="min-height: 100vh">
       <a-layout-header class="header">
         <a-space>
-          <img src="../assets/oj-logo.png" class="logo" />
-          <div>LCOJ</div>
+          <div class="title">—— LCOJ ——</div>
         </a-space>
       </a-layout-header>
       <a-layout-content class="content">
@@ -24,9 +23,13 @@
     0% 0% / 100% 100%;
 }
 
-#userLayout .logo {
-  width: 64px;
-  height: 64px;
+#userLayout .title {
+  font-size: 42px;
+  font-weight: bold;
+  color: #1890ff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  padding-top: 30px;
+  padding-bottom: 40px;
 }
 
 #userLayout .header {

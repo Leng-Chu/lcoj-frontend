@@ -9,6 +9,7 @@ import QuestionsView from "@/views/question/QuestionsView.vue";
 import QuestionSubmitView from "@/views/question/QuestionSubmitView.vue";
 import ViewQuestionView from "@/views/question/ViewQuestionView.vue";
 import AddJudgeCaseView from "@/views/question/AddJudgeCaseView.vue";
+import ViewUserView from "@/views/user/ViewUserView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -20,11 +21,13 @@ export const routes: Array<RouteRecordRaw> = [
         path: "/user/login",
         name: "用户登录",
         component: UserLoginView,
+        meta: { title: "用户登录" },
       },
       {
         path: "/user/register",
         name: "用户注册",
         component: UserRegisterView,
+        meta: { title: "用户注册" },
       },
     ],
     meta: {
@@ -35,6 +38,7 @@ export const routes: Array<RouteRecordRaw> = [
     path: "/questions",
     name: "浏览题目",
     component: QuestionsView,
+    meta: { title: "浏览题目" },
   },
   {
     path: "/manage/question/",
@@ -42,6 +46,7 @@ export const routes: Array<RouteRecordRaw> = [
     component: ManageQuestionView,
     meta: {
       access: ACCESS_ENUM.ADMIN,
+      title: "管理题目",
     },
   },
   {
@@ -51,6 +56,7 @@ export const routes: Array<RouteRecordRaw> = [
     props: true,
     meta: {
       access: ACCESS_ENUM.USER,
+      title: "评测状态",
     },
   },
   {
@@ -61,6 +67,7 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {
       access: ACCESS_ENUM.USER,
       hideInMenu: true,
+      title: "在线做题",
     },
   },
   {
@@ -69,6 +76,7 @@ export const routes: Array<RouteRecordRaw> = [
     component: AddQuestionView,
     meta: {
       access: ACCESS_ENUM.ADMIN,
+      title: "创建题目",
     },
   },
   {
@@ -78,24 +86,32 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {
       access: ACCESS_ENUM.ADMIN,
       hideInMenu: true,
+      title: "更新题目",
     },
   },
   {
     path: "/judgeCase",
-    name: "管理测试数据",
+    name: "管理测试用例",
     component: AddJudgeCaseView,
     props: true,
     meta: {
       access: ACCESS_ENUM.ADMIN,
       hideInMenu: true,
+      title: "管理测试用例",
+    },
+  },
+  {
+    path: "/view/user",
+    name: "个人信息",
+    component: ViewUserView,
+    meta: {
+      access: ACCESS_ENUM.USER,
+      hideInMenu: true,
+      title: "个人信息",
     },
   },
   {
     path: "/",
-    name: "主页",
-    component: QuestionsView,
-    meta: {
-      hideInMenu: true,
-    },
+    redirect: "/questions",
   },
 ];

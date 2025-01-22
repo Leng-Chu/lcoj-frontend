@@ -12,7 +12,6 @@
           disabled
         >
           <div class="title-bar">
-            <img class="logo" src="../assets/oj-logo.png" />
             <div class="title">LCOJ</div>
           </div>
         </a-menu-item>
@@ -30,7 +29,8 @@
       <a-popover v-else position="bottom" trigger="click">
         <a-link>{{ store.state.user.loginUser.userName }}</a-link>
         <template #content>
-          <p class="logout" @click="doLogout">退出登录</p>
+          <p class="down" @click="toPersonal">个人信息</p>
+          <p class="down" @click="doLogout">退出登录</p>
         </template>
       </a-popover>
     </a-col>
@@ -86,6 +86,10 @@ const doLogin = () => {
   router.push("/user/login");
 };
 
+const toPersonal = () => {
+  router.push("/view/user");
+};
+
 const doLogout = async () => {
   //调用logout接口
   await UserControllerService.userLogoutUsingPost();
@@ -102,21 +106,24 @@ const doLogout = async () => {
 </script>
 
 <style scoped>
+#globalHeader {
+  height: 64px;
+}
+
 .title-bar {
   display: flex;
   align-items: center;
 }
 
 .title {
-  color: #444;
-  margin-left: 16px;
+  font-size: 28px;
+  font-weight: bold;
+  color: #1890ff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  padding-left: 10px;
 }
 
-.logo {
-  height: 48px;
-}
-
-.logout {
+.down {
   cursor: pointer;
 
   &:hover {

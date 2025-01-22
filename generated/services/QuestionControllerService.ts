@@ -3,6 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { BaseResponse_boolean_ } from '../models/BaseResponse_boolean_';
+import type { BaseResponse_List_Question_ } from '../models/BaseResponse_List_Question_';
 import type { BaseResponse_long_ } from '../models/BaseResponse_long_';
 import type { BaseResponse_Page_QuestionListVO_ } from '../models/BaseResponse_Page_QuestionListVO_';
 import type { BaseResponse_Page_QuestionManageVO_ } from '../models/BaseResponse_Page_QuestionManageVO_';
@@ -19,6 +20,23 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 
 export class QuestionControllerService {
+
+    /**
+     * getAcceptQuestion
+     * @returns BaseResponse_List_Question_ OK
+     * @throws ApiError
+     */
+    public static getAcceptQuestionUsingGet(): CancelablePromise<BaseResponse_List_Question_> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/question/accept',
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
 
     /**
      * addQuestion
@@ -102,6 +120,23 @@ deleteRequest: DeleteRequest,
             method: 'POST',
             url: '/api/question/delete',
             body: deleteRequest,
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+
+    /**
+     * getFailQuestion
+     * @returns BaseResponse_List_Question_ OK
+     * @throws ApiError
+     */
+    public static getFailQuestionUsingGet(): CancelablePromise<BaseResponse_List_Question_> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/question/fail',
             errors: {
                 401: `Unauthorized`,
                 403: `Forbidden`,

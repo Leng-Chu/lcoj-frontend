@@ -311,13 +311,14 @@ const onAnswerChange = (value: string) => {
 };
 
 const manageJudgeCase = () => {
-  router.push({
+  const url = router.resolve({
     path: "/judgeCase",
     query: {
       num: form.value.num,
       title: form.value.title,
     },
-  });
+  }).href;
+  window.open(url, "_blank");
 };
 </script>
 

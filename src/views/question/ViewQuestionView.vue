@@ -165,7 +165,7 @@ const doSubmit = async () => {
       replace: true,
     });
   } else {
-    message.error("提交失败," + res.message);
+    message.error("提交失败，" + res.message);
   }
 };
 

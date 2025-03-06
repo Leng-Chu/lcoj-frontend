@@ -22,7 +22,7 @@ export type OpenAPIConfig = {
 };
 
 export const OpenAPI: OpenAPIConfig = {
-  BASE: isDev ? "http://localhost:8101" : "http://101.200.62.109:8101",
+  BASE: isDev ? "http://localhost:8101" : "https://lcoj.xyz:8101",
   VERSION: "1.0",
   WITH_CREDENTIALS: true,
   CREDENTIALS: "include",

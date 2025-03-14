@@ -258,7 +258,7 @@ const doSubmit = async () => {
   if (!form.value.language) {
     form.value.language = "none";
   }
-  console.log(form.value);
+  //console.log(form.value);
   // 区分更新还是创建
   if (updatePage) {
     const res = await QuestionControllerService.updateQuestionUsingPost(

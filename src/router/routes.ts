@@ -10,6 +10,7 @@ import QuestionSubmitView from "@/views/question/QuestionSubmitView.vue";
 import ViewQuestionView from "@/views/question/ViewQuestionView.vue";
 import AddJudgeCaseView from "@/views/question/AddJudgeCaseView.vue";
 import ViewUserView from "@/views/user/ViewUserView.vue";
+import UserRankView from "@/views/user/UserRankView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -77,6 +78,15 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {
       access: ACCESS_ENUM.ADMIN,
       title: "创建题目",
+    },
+  },
+  {
+    path: "/rank",
+    name: "做题排行",
+    component: UserRankView,
+    meta: {
+      access: ACCESS_ENUM.USER,
+      title: "做题排行",
     },
   },
   {

@@ -4,6 +4,7 @@
 /* eslint-disable */
 import type { BaseResponse_boolean_ } from '../models/BaseResponse_boolean_';
 import type { BaseResponse_long_ } from '../models/BaseResponse_long_';
+import type { BaseResponse_Page_UserRankVO_ } from '../models/BaseResponse_Page_UserRankVO_';
 import type { BaseResponse_UserVO_ } from '../models/BaseResponse_UserVO_';
 import type { DeleteRequest } from '../models/DeleteRequest';
 import type { UserAddRequest } from '../models/UserAddRequest';
@@ -110,6 +111,39 @@ userLoginRequest: UserLoginRequest,
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/user/logout',
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+
+    /**
+     * getRankByPage
+     * @param current 
+     * @param pageSize 
+     * @param sortField 
+     * @param sortOrder 
+     * @returns BaseResponse_Page_UserRankVO_ OK
+     * @returns any Created
+     * @throws ApiError
+     */
+    public static getRankByPageUsingPost(
+current?: number,
+pageSize?: number,
+sortField?: string,
+sortOrder?: string,
+): CancelablePromise<BaseResponse_Page_UserRankVO_ | any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/user/rank',
+            query: {
+                'current': current,
+                'pageSize': pageSize,
+                'sortField': sortField,
+                'sortOrder': sortOrder,
+            },
             errors: {
                 401: `Unauthorized`,
                 403: `Forbidden`,

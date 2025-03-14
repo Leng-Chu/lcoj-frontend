@@ -1,6 +1,6 @@
 <template>
   <div id="viewUserView">
-    <h1>个人信息 - {{ store.state.user.loginUser.userName }}</h1>
+    <h1>个人信息 - {{ searchParams.userName }}</h1>
     <br />
     <a-space :size="'large'" align="start">
       <a-list :data="dataList" :hoverable="true" style="width: 805px">
@@ -14,7 +14,12 @@
                 align-items: center;
                 cursor: pointer;
               "
-              @click="showCode(x.code, x.language)"
+              @click="
+                searchParams.userName === store.state.user.loginUser.userName ||
+                store.state.user.loginUser.userRole === ACCESS_ENUM.ADMIN
+                  ? showCode(x.code, x.language)
+                  : router.push({ path: `/view/question/${x.questionId}` })
+              "
             >
               <span>
                 <router-link
@@ -109,8 +114,10 @@ import {
 } from "../../../generated";
 import CodeEditor from "@/components/CodeEditor.vue";
 import moment from "moment/moment";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
+import ACCESS_ENUM from "@/access/accessEnum";
 
+const router = useRouter();
 const route = useRoute();
 const store = useStore();
 const dataList = ref([]);
@@ -129,7 +136,9 @@ const showCode = (code: string, language: string) => {
 };
 
 const searchParams = ref<QuestionSubmitQueryRequest>({
-  userName: store.state.user.loginUser.userName,
+  userName: route.query.userName
+    ? route.query.userName
+    : store.state.user.loginUser.userName,
   pageSize: 8,
   current: 1,
 });

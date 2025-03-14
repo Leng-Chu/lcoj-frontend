@@ -74,7 +74,7 @@ router.afterEach((to, from, failure) => {
   selectedKeys.value = [to.path];
 });
 
-console.log();
+//console.log();
 
 const doMenuClick = (key: string) => {
   router.push({
@@ -101,7 +101,7 @@ const doLogout = async () => {
   await router.push({ path: "/questions" });
   setTimeout(() => {
     window.location.reload();
-  }, 1000);
+  }, 200);
 };
 </script>
 

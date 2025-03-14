@@ -62,7 +62,7 @@ const handleSubmit = async () => {
   // 登录成功，跳转到主页
   if (res.code === 0) {
     await store.dispatch("user/getLoginUser");
-    console.log("登录后用户信息:", store.state.user.loginUser);
+    //console.log("登录后用户信息:", store.state.user.loginUser);
     router.push({
       path: "/",
       replace: true,

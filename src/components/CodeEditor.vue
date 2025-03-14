@@ -28,7 +28,7 @@ const props = withDefaults(defineProps<Props>(), {
   value: () => "",
   language: () => "cpp",
   handleChange: (v: string) => {
-    console.log(v);
+    //console.log(v);
   },
   readOnly: () => false,
 });

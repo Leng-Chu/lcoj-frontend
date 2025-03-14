@@ -23,13 +23,19 @@ export class QuestionControllerService {
 
     /**
      * getAcceptQuestion
+     * @param userName userName
      * @returns BaseResponse_List_Question_ OK
      * @throws ApiError
      */
-    public static getAcceptQuestionUsingGet(): CancelablePromise<BaseResponse_List_Question_> {
+    public static getAcceptQuestionUsingGet(
+userName?: string,
+): CancelablePromise<BaseResponse_List_Question_> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/question/accept',
+            query: {
+                'userName': userName,
+            },
             errors: {
                 401: `Unauthorized`,
                 403: `Forbidden`,
@@ -130,13 +136,19 @@ deleteRequest: DeleteRequest,
 
     /**
      * getFailQuestion
+     * @param userName userName
      * @returns BaseResponse_List_Question_ OK
      * @throws ApiError
      */
-    public static getFailQuestionUsingGet(): CancelablePromise<BaseResponse_List_Question_> {
+    public static getFailQuestionUsingGet(
+userName?: string,
+): CancelablePromise<BaseResponse_List_Question_> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/question/fail',
+            query: {
+                'userName': userName,
+            },
             errors: {
                 401: `Unauthorized`,
                 403: `Forbidden`,

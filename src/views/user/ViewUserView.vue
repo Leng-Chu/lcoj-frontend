@@ -194,7 +194,7 @@ const loadData = async () => {
   }
   const res2 =
     await QuestionSubmitControllerService.countQuestionSubmitUsingPost(
-      store.state.user.loginUser.userName
+      searchParams.value.userName
     );
   if (res2.code === 0) {
     data.value = res2.data;
@@ -208,7 +208,9 @@ const loadData = async () => {
   } else {
     message.error("加载失败，" + res2.message);
   }
-  const res3 = await QuestionControllerService.getAcceptQuestionUsingGet();
+  const res3 = await QuestionControllerService.getAcceptQuestionUsingGet(
+    searchParams.value.userName
+  );
   if (res3.code === 0) {
     if (res3.data) {
       acceptList.value = res3.data;
@@ -216,7 +218,9 @@ const loadData = async () => {
   } else {
     message.error("加载失败，" + res3.message);
   }
-  const res4 = await QuestionControllerService.getFailQuestionUsingGet();
+  const res4 = await QuestionControllerService.getFailQuestionUsingGet(
+    searchParams.value.userName
+  );
   if (res4.code === 0) {
     if (res4.data) {
       failList.value = res4.data;

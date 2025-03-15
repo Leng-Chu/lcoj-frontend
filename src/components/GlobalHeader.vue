@@ -87,7 +87,7 @@ const doLogin = () => {
 };
 
 const toPersonal = () => {
-  router.push("/view/user");
+  window.location.href = "/view/user";
 };
 
 const doLogout = async () => {

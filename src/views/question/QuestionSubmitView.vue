@@ -81,6 +81,19 @@
           {{ record.questionTitle }}
         </router-link>
       </template>
+      <template #userName="{ record }">
+        <router-link
+          :to="{
+            path: `/view/user`,
+            query: {
+              userName: record.userName,
+            },
+          }"
+          class="custom-link"
+        >
+          {{ record.userName }}
+        </router-link>
+      </template>
       <template #language="{ record }">
         <a
           v-if="record.code"
@@ -244,7 +257,7 @@ const columns = ref([
   },
   {
     title: "提交者",
-    dataIndex: "userName",
+    slotName: "userName",
     align: "center",
     width: 100,
   },
